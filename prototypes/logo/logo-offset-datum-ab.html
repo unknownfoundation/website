@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="amber">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UF · logo A/B — offset vs offset+datum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="palette.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--fd);padding:56px max(24px,5vw) 140px}
+  .h{font-family:var(--fm);font-size:12px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+  .lead{color:var(--dim);font-size:14px;max-width:660px;line-height:1.7;margin-bottom:46px}
+  .lead b{color:var(--accent)}
+  .row{display:flex;gap:60px;flex-wrap:wrap;margin-bottom:54px}
+  .col{flex:1;min-width:320px}
+  .tag{font-family:var(--fm);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;margin-bottom:24px;display:block}
+  .tag b{color:var(--dim);font-weight:400}
+  .sizes{display:flex;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:30px}
+  .sizes figure{display:flex;flex-direction:column;align-items:center;gap:9px}
+  .sizes figcaption{font-family:var(--fm);font-size:10px;color:var(--faint)}
+  .mark path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .mark circle{fill:var(--accent)}
+  .mark.s16 path{stroke-width:2.4}
+  .chip{display:inline-flex;gap:18px;align-items:center;background:#F2EEE7;padding:14px 18px;border-radius:5px;margin-top:6px}
+  .chip .mark path{stroke:#0A0908} .chip .mark circle{fill:#0A0908}
+  .lock{display:flex;align-items:center;gap:14px;margin-top:30px}
+  .lock .wm{font-family:var(--fd);font-weight:600;font-size:26px;letter-spacing:-.01em}
+  .lock .wm .un{color:var(--dim);font-weight:300} .lock .wm .kn{color:var(--accent)} .lock .wm .fo{color:var(--text)}
+  .note{font-family:var(--fm);font-size:11.5px;color:var(--faint);line-height:1.6;margin-top:18px;max-width:360px}
+</style>
+</head>
+<body>
+  <div class="h">Unknown Foundation — logo A/B</div>
+  <p class="lead"><b>A</b> — offset-скобки одни. <b>B</b> — те же скобки + datum-точка (точка отсчёта в центре). Смотри на 16px (favicon!) — там решается всё. Покрути палитры внизу.</p>
+
+  <div class="row">
+    <!-- A -->
+    <div class="col">
+      <span class="tag">A · <b>offset (текущий)</b></span>
+      <div class="sizes">
+        <figure><svg class="mark s16" width="16" height="16" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><figcaption>16</figcaption></figure>
+        <figure><svg class="mark" width="24" height="24" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><figcaption>24</figcaption></figure>
+        <figure><svg class="mark" width="32" height="32" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><figcaption>32</figcaption></figure>
+        <figure><svg class="mark" width="48" height="48" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><figcaption>48</figcaption></figure>
+        <figure><svg class="mark" width="96" height="96" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><figcaption>96</figcaption></figure>
+      </div>
+      <span class="chip"><svg class="mark" width="28" height="28" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><span style="font-family:var(--fm);font-size:12px;color:#0A0908">on light</span></span>
+      <div class="lock"><svg class="mark" width="38" height="38" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg><span class="wm"><span class="un">un</span><span class="kn">known</span> <span class="fo">foundation</span></span></div>
+      <p class="note">Чистый, ownable. Смещение и есть знак — читается до 16px. Минимум деталей = максимум на favicon.</p>
+    </div>
+
+    <!-- B -->
+    <div class="col">
+      <span class="tag">B · <b>offset + datum</b></span>
+      <div class="sizes">
+        <figure><svg class="mark s16" width="16" height="16" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><figcaption>16</figcaption></figure>
+        <figure><svg class="mark" width="24" height="24" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><figcaption>24</figcaption></figure>
+        <figure><svg class="mark" width="32" height="32" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><figcaption>32</figcaption></figure>
+        <figure><svg class="mark" width="48" height="48" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><figcaption>48</figcaption></figure>
+        <figure><svg class="mark" width="96" height="96" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><figcaption>96</figcaption></figure>
+      </div>
+      <span class="chip"><svg class="mark" width="28" height="28" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><span style="font-family:var(--fm);font-size:12px;color:#0A0908">on light</span></span>
+      <div class="lock"><svg class="mark" width="38" height="38" viewBox="0 0 32 32"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/><circle cx="16" cy="14.5" r="1.7"/></svg><span class="wm"><span class="un">un</span><span class="kn">known</span> <span class="fo">foundation</span></span></div>
+      <p class="note">Datum добавляет смысл (точка отсчёта/бенчмарк) и фокус в центре. Но на 16px точка может слипаться со скобками → проверь именно маленький размер.</p>
+    </div>
+  </div>
+
+  <div class="palette-switch" role="group" aria-label="Palette (demo)">
+    <span class="lbl">PALETTE</span>
+    <button type="button" data-p="amber" aria-label="Amber"><span class="sw" style="background:#E0A24A"></span><span>Amber</span></button>
+    <button type="button" data-p="graphite" aria-label="Graphite"><span class="sw" style="background:#C6C6CC"></span><span>Graphite</span></button>
+    <button type="button" data-p="nocturne" aria-label="Nocturne"><span class="sw" style="background:#6E9BD8"></span><span>Nocturne</span></button>
+    <button type="button" data-p="patina" aria-label="Patina"><span class="sw" style="background:#5FA391"></span><span>Patina</span></button>
+    <button type="button" data-p="slate" aria-label="Slate"><span class="sw" style="background:#D4923A"></span><span>Slate</span></button>
+    <button type="button" data-p="signal" aria-label="Signal"><span class="sw" style="background:#4D9EFF"></span><span>Signal</span></button>
+  </div>
+<script src="palette.js"></script>
+</body>
+</html>

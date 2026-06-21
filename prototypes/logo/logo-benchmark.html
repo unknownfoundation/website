@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="amber">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unknown Foundation — Benchmark refinement (pass 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="palette.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--fd);-webkit-font-smoothing:antialiased;padding:7vh 6vw 16vh}
+  h1{font-size:clamp(28px,3.5vw,42px);font-weight:500;letter-spacing:-.02em;margin-bottom:12px}
+  .sub{color:var(--text-dim);font-size:14px;line-height:1.6;max-width:660px;font-weight:300;margin-bottom:40px}
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+  .item{background:var(--bg);padding:32px;position:relative}
+  .item.orig{opacity:.55}
+  .badge{position:absolute;top:14px;right:14px;font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:var(--text-faint);border:1px solid var(--line-strong);border-radius:2px;padding:3px 7px}
+  .sizes{display:flex;align-items:center;gap:30px;height:74px;margin-bottom:22px}
+  .mark{color:var(--accent);display:inline-flex;align-items:center;justify-content:center}
+  .m64{width:64px;height:64px}.m32{width:32px;height:32px}.m16{width:16px;height:16px}
+  .mark svg,.mk22 svg{width:100%!important;height:100%!important;display:block}
+  .mk22{width:22px;height:22px;color:var(--accent);display:inline-flex}
+  .lockup{display:flex;align-items:center;gap:11px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:16px}
+  .wm{font-family:var(--fm);font-size:13px;letter-spacing:.05em;color:var(--text);font-weight:500}
+  .name{font-size:17px;font-weight:500;margin-bottom:5px}
+  .desc{font-size:13.5px;line-height:1.5;color:var(--text-dim);font-weight:300}
+</style>
+</head>
+<body>
+  <h1>Benchmark — pass 2 · datum-outside geometry</h1>
+  <p class="sub">Pass 1 (V1 Reach / V2 Foundation / V3 Beacon) is superseded — the critic found the datum-inside-U geometry caps at ~7.5 (favicon + diacritic risk). These commit to the recommended fix: the known datum point lives OUTSIDE the open foundation, large enough to survive 16px. 16px column = favicon test; switch palette below.</p>
+  <div class="grid">
+    <div class="item orig">
+      <div class="badge">ORIGINAL · 7.2</div>
+      <div class="sizes">
+        <span class="mark m64"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 V19 a7 7 0 0 0 14 0 V13"/><path d="M23 13 H14"/></g></svg></span>
+        <span class="mark m32"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 V19 a7 7 0 0 0 14 0 V13"/><path d="M23 13 H14"/></g></svg></span>
+        <span class="mark m16"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 V19 a7 7 0 0 0 14 0 V13"/><path d="M23 13 H14"/></g></svg></span>
+      </div>
+      <div class="name">Original</div>
+      <div class="desc">For reference (floating bar).</div>
+    </div>
+
+    <div class="item">
+      <div class="badge">V4a · OPEN DATUM</div>
+      <div class="sizes">
+        <span class="mark m64"><svg viewBox="0 0 32 32"><path d="M9 6 V18 a7 7 0 0 0 14 0" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23" cy="9" r="3" fill="currentColor"/></svg></span>
+        <span class="mark m32"><svg viewBox="0 0 32 32"><path d="M9 6 V18 a7 7 0 0 0 14 0" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23" cy="9" r="3" fill="currentColor"/></svg></span>
+        <span class="mark m16"><svg viewBox="0 0 32 32"><path d="M9 6 V18 a7 7 0 0 0 14 0" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23" cy="9" r="3" fill="currentColor"/></svg></span>
+      </div>
+      <div class="lockup"><span class="mk22"><svg viewBox="0 0 32 32"><path d="M9 6 V18 a7 7 0 0 0 14 0" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23" cy="9" r="3" fill="currentColor"/></svg></span><span class="wm">UNKNOWN&nbsp;FOUNDATION</span></div>
+      <div class="name">Open Datum</div>
+      <div class="desc">An open foundation (left wall + floor) that reaches toward a single fixed datum point in the open unknown — the point stands where a closing wall would be.</div>
+    </div>
+
+    <div class="item">
+      <div class="badge">V4b · BENCHMARK</div>
+      <div class="sizes">
+        <span class="mark m64"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12 H25"/><path d="M11 24 L16 16 L21 24"/></g></svg></span>
+        <span class="mark m32"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12 H25"/><path d="M11 24 L16 16 L21 24"/></g></svg></span>
+        <span class="mark m16"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12 H25"/><path d="M11 24 L16 16 L21 24"/></g></svg></span>
+      </div>
+      <div class="lockup"><span class="mk22"><svg viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12 H25"/><path d="M11 24 L16 16 L21 24"/></g></svg></span><span class="wm">UNKNOWN&nbsp;FOUNDATION</span></div>
+      <div class="name">Benchmark</div>
+      <div class="desc">The literal surveyor's benchmark: a broad arrow rising to a fixed datum line — the engineer's mark for a known point cut into unmapped ground.</div>
+    </div>
+
+    <div class="item">
+      <div class="badge">V4c · CRADLE</div>
+      <div class="sizes">
+        <span class="mark m64"><svg viewBox="0 0 32 32"><path d="M9 8 V18 a7 7 0 0 0 14 0 V8" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="11" r="3.2" fill="currentColor"/></svg></span>
+        <span class="mark m32"><svg viewBox="0 0 32 32"><path d="M9 8 V18 a7 7 0 0 0 14 0 V8" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="11" r="3.2" fill="currentColor"/></svg></span>
+        <span class="mark m16"><svg viewBox="0 0 32 32"><path d="M9 8 V18 a7 7 0 0 0 14 0 V8" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="11" r="3.2" fill="currentColor"/></svg></span>
+      </div>
+      <div class="lockup"><span class="mk22"><svg viewBox="0 0 32 32"><path d="M9 8 V18 a7 7 0 0 0 14 0 V8" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="11" r="3.2" fill="currentColor"/></svg></span><span class="wm">UNKNOWN&nbsp;FOUNDATION</span></div>
+      <div class="name">Cradle</div>
+      <div class="desc">Symmetric open foundation holding one large datum point — the known, cradled, open to the unknown above. (Higher diacritic risk — included for comparison.)</div>
+    </div>
+  </div>
+
+  <div class="palette-switch" role="group" aria-label="Color palette">
+    <span class="lbl">PALETTE</span>
+    <button type="button" data-p="amber" aria-label="Amber palette"><span class="sw" style="background:#E0A24A"></span><span>Amber</span></button>
+    <button type="button" data-p="graphite" aria-label="Graphite palette"><span class="sw" style="background:#C6C6CC"></span><span>Graphite</span></button>
+    <button type="button" data-p="nocturne" aria-label="Nocturne palette"><span class="sw" style="background:#6E9BD8"></span><span>Nocturne</span></button>
+    <button type="button" data-p="patina" aria-label="Patina palette"><span class="sw" style="background:#5FA391"></span><span>Patina</span></button>
+  </div>
+<script src="palette.js"></script>
+</body>
+</html>
