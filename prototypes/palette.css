@@ -8,6 +8,7 @@
   --fm:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace;
   --font-display:var(--fd); --font-mono:var(--fm);
   --ease:cubic-bezier(0.16,1,0.3,1); --slow:1300ms; color-scheme:dark;
+  --surface:rgba(0,0,0,.32); /* panel/terminal bg — palette-aware; dark palettes darken, light palettes lighten (overridden below) */
   --amber:var(--accent);            /* back-compat aliases — all follow the active palette */
   --text-dim:var(--dim); --text-faint:var(--faint);
 }
@@ -17,11 +18,15 @@
 :root[data-palette="patina"]   {--bg:#0A0908;--text:#ECE8E1;--dim:#8B8782;--faint:#595550;--accent:#5FA391;--glow:95,163,145;--line:rgba(236,232,225,0.08);--line-strong:rgba(236,232,225,0.14)}
 :root[data-palette="slate"]    {--bg:#1C2028;--text:#CDD2D9;--dim:#828B98;--faint:#49545F;--accent:#D4923A;--glow:212,146,58;--line:rgba(205,210,217,0.09);--line-strong:rgba(205,210,217,0.16)}
 :root[data-palette="signal"]   {--bg:#080C18;--text:#D8E2F2;--dim:#7A879E;--faint:#3A4659;--accent:#4D9EFF;--glow:77,158,255;--line:rgba(216,226,242,0.08);--line-strong:rgba(216,226,242,0.15)}
+:root[data-palette="ember"]    {--bg:#191309;--text:#F2ECE2;--dim:#9D958A;--faint:#605648;--accent:#E5904A;--glow:229,144,74;--line:rgba(242,236,226,0.08);--line-strong:rgba(242,236,226,0.14)}
+/* --- light / semi-light variants (A/B). Surfaces lighten; color-scheme flips so native controls match. --- */
+:root[data-palette="paper"]    {--bg:#D9D1C2;--text:#1E1A14;--dim:#5B5345;--faint:#8C8474;--accent:#834A0B;--glow:131,74,11;--line:rgba(30,26,20,0.12);--line-strong:rgba(30,26,20,0.20);--surface:rgba(255,255,255,.16);color-scheme:light}
+:root[data-palette="daylight"] {--bg:#D6DADF;--text:#181A1E;--dim:#4F5862;--faint:#868E98;--accent:#1C549E;--glow:28,84,158;--line:rgba(24,26,30,0.10);--line-strong:rgba(24,26,30,0.16);--surface:rgba(255,255,255,.16);color-scheme:light}
 
 /* the switcher UI — fixed, low-key, glass */
 .palette-switch{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:70;
   display:flex;align-items:center;gap:2px;padding:6px;border:1px solid var(--line-strong);
-  border-radius:4px;background:rgba(0,0,0,0.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  border-radius:4px;background:var(--surface);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .palette-switch .lbl{font-family:var(--fm);font-size:10px;letter-spacing:.16em;color:var(--dim);padding:0 10px 0 6px}
 .palette-switch button{font-family:var(--fm);font-size:11.5px;letter-spacing:.02em;color:var(--dim);
   background:none;border:0;padding:7px 12px;border-radius:2px;cursor:pointer;display:flex;align-items:center;gap:7px;
