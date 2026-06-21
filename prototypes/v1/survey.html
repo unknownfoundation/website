@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="amber">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UF — Direction 03 · Cartographic Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="palette.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-display);-webkit-font-smoothing:antialiased;overflow:hidden;transition:background .6s var(--ease)}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .survey{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
+  .frame{position:absolute;inset:40px;border:1px solid var(--line);pointer-events:none}
+  .crop{position:absolute;width:14px;height:14px;border:1px solid var(--line-strong)}
+  .crop.tl{top:32px;left:32px;border-right:none;border-bottom:none}
+  .crop.tr{top:32px;right:32px;border-left:none;border-bottom:none}
+  .crop.bl{bottom:32px;left:32px;border-right:none;border-top:none}
+  .crop.br{bottom:32px;right:32px;border-left:none;border-top:none}
+  .readout{position:absolute;top:56px;right:64px;text-align:right;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--text-dim);line-height:1.9}
+  .readout .v{color:var(--text)}
+  .readout .st{color:var(--text-dim)}                         /* amber stripped from status label */
+  .scalebar{position:absolute;bottom:60px;left:64px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--text-dim)}  /* faint -> dim */
+  .scalebar .bar{display:inline-block;width:120px;height:1px;background:var(--text-dim);vertical-align:middle;margin-right:10px;position:relative}
+  .scalebar .bar::before,.scalebar .bar::after{content:"";position:absolute;width:1px;height:6px;background:var(--text-dim);top:-3px}
+  .scalebar .bar::before{left:0}.scalebar .bar::after{right:0}
+  .topo{position:absolute;width:80vmax;height:80vmax;opacity:.08;color:var(--text)}   /* raised from .05 for perceptibility */
+  .topo path{fill:none;stroke:currentColor;stroke-width:.6}
+  .center{position:relative;text-align:center;z-index:10}
+  .marker{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:var(--accent);margin-bottom:26px}  /* amber kept: the charted/known point */
+  .marker .plus{display:inline-block;margin-right:8px}
+  h1{font-size:clamp(52px,10vw,150px);font-weight:500;line-height:.92;letter-spacing:-.03em;text-transform:uppercase}
+  .tagline{margin:30px auto 0;max-width:440px;font-size:16px;line-height:1.55;color:var(--text-dim);font-weight:300}
+  .actions{margin-top:38px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{font-family:var(--font-mono);font-size:13px;padding:13px 20px;border:1px solid var(--line-strong);border-radius:2px;color:var(--text);text-decoration:none;transition:border-color .4s var(--ease),color .4s var(--ease)}
+  .btn--p{border-color:rgba(var(--glow),.55);color:var(--accent)}
+  .btn:hover,.btn:focus-visible{border-color:var(--text-dim)}
+  .btn--p:hover,.btn--p:focus-visible{border-color:var(--accent);color:var(--accent)}   /* keep amber on the primary */
+  .cross{position:fixed;top:0;left:0;pointer-events:none;z-index:5;opacity:.55}
+  .cross::before,.cross::after{content:"";position:absolute;background:var(--accent);opacity:.45}   /* cursor instrument — interactive amber */
+  .cross::before{width:22px;height:1px;left:-11px;top:0}
+  .cross::after{height:22px;width:1px;top:-11px;left:0}
+  .tag{position:fixed;right:18px;bottom:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);z-index:60}
+  @keyframes rise{from{opacity:0;clip-path:inset(100% 0 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .anim{opacity:0;animation:rise var(--slow) var(--ease) forwards}
+  .actions.anim{animation-name:fade}
+  .d1{animation-delay:120ms}.d2{animation-delay:300ms}.d3{animation-delay:520ms}.d4{animation-delay:740ms}
+  @media(prefers-reduced-motion:reduce){.anim{animation:none;opacity:1;clip-path:none}.cross{display:none}body,.btn{transition:none}}
+</style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="survey">
+    <div class="frame" aria-hidden="true"></div>
+    <span class="crop tl" aria-hidden="true"></span><span class="crop tr" aria-hidden="true"></span><span class="crop bl" aria-hidden="true"></span><span class="crop br" aria-hidden="true"></span>
+    <svg class="topo" viewBox="-100 -100 200 200" aria-hidden="true"><g id="contours"></g></svg>
+    <div class="readout" aria-hidden="true">
+      <div>LAT <span class="v" id="lat">—</span></div>
+      <div>LON <span class="v" id="lon">—</span></div>
+      <div>STATUS <span class="st">UNCHARTED</span></div>
+    </div>
+    <div class="scalebar" aria-hidden="true"><span class="bar"></span>UNKNOWN DISTANCE</div>
+    <main id="main" class="center">
+      <p class="marker anim d1"><span class="plus" aria-hidden="true">+</span>PLOTTED — UF / 00.01</p>
+      <h1 class="anim d2">Unknown<br>Foundation</h1>
+      <p class="tagline anim d3">A small open-source engineering collective surveying technical territory that is not yet mapped — in public.</p>
+      <div class="actions anim d4">
+        <a class="btn btn--p" href="#">View Projects →</a>
+        <a class="btn" href="#">Explore Expeditions</a>
+        <a class="btn" href="#">Contribute</a>
+      </div>
+    </main>
+  </div>
+  <div class="cross" id="cross" aria-hidden="true"></div>
+  <div class="tag" aria-hidden="true">DIRECTION 03 — CARTOGRAPHIC SURVEY</div>
+
+  <div class="palette-switch" role="group" aria-label="Color palette">
+    <span class="lbl">PALETTE</span>
+    <button type="button" data-p="amber" aria-label="Amber palette"><span class="sw" style="background:#E0A24A"></span><span>Amber</span></button>
+    <button type="button" data-p="graphite" aria-label="Graphite palette"><span class="sw" style="background:#C6C6CC"></span><span>Graphite</span></button>
+    <button type="button" data-p="nocturne" aria-label="Nocturne palette"><span class="sw" style="background:#6E9BD8"></span><span>Nocturne</span></button>
+    <button type="button" data-p="patina" aria-label="Patina palette"><span class="sw" style="background:#5FA391"></span><span>Patina</span></button>
+  </div>
+<script src="palette.js"></script>
+<script>
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  (function(){
+    const blob="M0,-58 C34,-58 60,-30 56,6 C52,40 26,58 -10,56 C-44,54 -62,26 -58,-10 C-54,-42 -32,-58 0,-58 Z";
+    const g=document.getElementById('contours');
+    for(let i=0;i<7;i++){const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d',blob);p.setAttribute('transform',`scale(${0.35+i*0.13})`);g.appendChild(p);}
+  })();
+  if(!reduce){
+    const lat=document.getElementById('lat'),lon=document.getElementById('lon'),cross=document.getElementById('cross');
+    addEventListener('mousemove',e=>{
+      cross.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;
+      const la=(e.clientY/innerHeight*180-90),lo=(e.clientX/innerWidth*360-180);
+      lat.textContent=Math.abs(la).toFixed(4)+'°'+(la>=0?'N':'S');
+      lon.textContent=Math.abs(lo).toFixed(4)+'°'+(lo>=0?'E':'W');
+    },{passive:true});
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unknown Foundation — Dark Telemetry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ================================================================
+   UNKNOWN FOUNDATION — DARK TELEMETRY
+   Theme: deep blue-black / cold electric blue accent
+   Signature device: live oscilloscope hero (3-channel telemetry)
+   ================================================================ */
+
+/* --- tokens --- */
+:root {
+  --bg: #060810;
+  --bg-2: #080c18;
+  --text: #d8e2f2;
+  --dim: #4e5e78;
+  --faint: #242d3d;
+  --accent: #4d9eff;
+  --accent-dim: rgba(77,158,255,0.55);
+  --glow-rgb: 77,158,255;
+  --line: rgba(77,158,255,0.07);
+  --line-strong: rgba(77,158,255,0.14);
+  --line-dim: rgba(77,158,255,0.05);
+  --fd: 'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --fm: 'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --ease: cubic-bezier(0.16,1,0.3,1);
+  color-scheme: dark;
+}
+
+/* --- reset --- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fd);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* film grain overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- accessibility --- */
+.skip-link {
+  position: fixed; top: -64px; left: 12px; z-index: 300;
+  padding: 10px 18px; background: var(--bg); color: var(--text);
+  border: 1px solid var(--accent); border-radius: 2px;
+  font-family: var(--fm); font-size: 12px; text-decoration: none;
+  transition: top 0.2s var(--ease);
+}
+.skip-link:focus { top: 12px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 1px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* --- nav --- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 40px;
+  background: linear-gradient(180deg, rgba(6,8,16,0.72) 0%, transparent 100%);
+  backdrop-filter: blur(0px);
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 11px;
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.08em;
+  color: var(--text); font-weight: 500; text-decoration: none;
+}
+.logo { width: 20px; height: 20px; display: inline-block; vertical-align: -4px; flex: none; }
+.logo .arc-known { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.logo .arc-unknown { fill: none; stroke: var(--dim); stroke-width: 1.5; stroke-dasharray: 2 3.5; }
+.logo .core { fill: var(--accent); }
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a {
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.04em;
+  color: var(--dim); text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a:hover, .nav-links a:focus-visible { color: var(--text); }
+.nav-gh {
+  font-family: var(--fm); font-size: 11px; letter-spacing: 0.06em;
+  color: var(--dim); text-decoration: none; border: 1px solid var(--line-strong);
+  padding: 7px 14px; border-radius: 2px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.nav-gh:hover, .nav-gh:focus-visible { color: var(--accent); border-color: var(--accent-dim); }
+@media (max-width: 860px) { .nav-links { display: none; } .nav { padding: 16px 22px; } }
+
+/* ================================================================
+   HERO — OSCILLOSCOPE
+   ================================================================ */
+.hero {
+  position: relative;
+  height: 100vh; min-height: 660px;
+  display: flex; align-items: center;
+  overflow: hidden;
+}
+#scope {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block; z-index: 0;
+}
+/* left-side vignette so text is always readable */
+.hero-veil {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(90deg,
+      rgba(6,8,16,0.96) 0%,
+      rgba(6,8,16,0.82) 22%,
+      rgba(6,8,16,0.44) 46%,
+      rgba(6,8,16,0.08) 64%,
+      transparent 80%
+    ),
+    linear-gradient(180deg,
+      rgba(6,8,16,0.52) 0%,
+      transparent 18%,
+      transparent 72%,
+      rgba(6,8,16,0.86) 100%
+    );
+}
+.hero-fore {
+  position: relative; z-index: 2;
+  padding: 0 40px; max-width: 700px;
+}
+.eyebrow {
+  font-family: var(--fm); font-size: 11px; letter-spacing: 0.18em;
+  color: var(--dim); margin-bottom: 28px; text-transform: uppercase;
+}
+.wordmark {
+  font-size: clamp(54px, 9.5vw, 148px);
+  font-weight: 500; line-height: 0.91; letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.w-unknown { display: block; color: var(--dim); font-weight: 300; }
+.w-foundation { display: block; color: var(--text); }
+.tagline {
+  margin-top: 30px; max-width: 480px;
+  font-size: clamp(15px, 1.4vw, 18px); line-height: 1.6;
+  color: var(--dim); font-weight: 300;
+}
+.actions {
+  margin-top: 38px; display: flex; gap: 12px; flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.02em;
+  padding: 12px 20px; border-radius: 2px; text-decoration: none;
+  border: 1px solid var(--line-strong); color: var(--text);
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease), background 0.3s var(--ease);
+}
+.btn-primary {
+  border-color: var(--accent-dim); color: var(--accent);
+}
+.btn-primary:hover, .btn-primary:focus-visible {
+  background: rgba(77,158,255,0.08); border-color: var(--accent);
+}
+.btn:hover, .btn:focus-visible { border-color: var(--dim); }
+
+/* scope HUD overlay — positioned at bottom-right inside hero */
+.scope-hud {
+  position: absolute; bottom: 32px; right: 40px; z-index: 2;
+  pointer-events: none;
+  font-family: var(--fm); font-size: 10px; letter-spacing: 0.1em;
+  color: rgba(77,158,255,0.45); line-height: 1.9;
+  text-align: right;
+}
+.scope-status {
+  position: absolute; bottom: 32px; left: 40px; z-index: 2;
+  pointer-events: none;
+  font-family: var(--fm); font-size: 10px; letter-spacing: 0.08em;
+  color: rgba(77,158,255,0.35); line-height: 1.9;
+}
+@media (max-width: 720px) {
+  .hero-fore { padding: 0 22px; }
+  .scope-hud { right: 22px; }
+  .scope-status { left: 22px; }
+}
+
+/* ================================================================
+   BELOW-FOLD SECTIONS
+   ================================================================ */
+.sec { max-width: 1200px; margin: 0 auto; padding: 120px 40px; }
+.sec-divide {
+  max-width: 1200px; margin: 0 auto; padding: 0 40px;
+  border-top: 1px solid var(--line);
+}
+
+.sec-head {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 24px; margin-bottom: 52px; flex-wrap: wrap;
+}
+.sec-head .eyebrow { margin-bottom: 12px; }
+.sec-head h2 {
+  font-size: clamp(28px, 3.6vw, 44px); font-weight: 500; letter-spacing: -0.025em;
+}
+.sec-more {
+  font-family: var(--fm); font-size: 12px; color: var(--dim);
+  text-decoration: none; border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 3px; white-space: nowrap;
+  transition: color 0.3s, border-color 0.3s;
+}
+.sec-more:hover, .sec-more:focus-visible { color: var(--accent); border-color: var(--accent-dim); }
+
+/* project grid */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+}
+.proj-card {
+  background: var(--bg); padding: 28px 28px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: background 0.45s var(--ease);
+}
+.proj-card:hover { background: rgba(77,158,255,0.025); }
+.proj-top { display: flex; justify-content: space-between; align-items: baseline; }
+.proj-code { font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.08em; color: var(--accent); }
+.proj-cat { font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.06em; color: var(--dim); text-transform: uppercase; }
+.proj-name { font-size: 21px; font-weight: 500; letter-spacing: -0.015em; color: var(--text); }
+.proj-desc { font-size: 14px; line-height: 1.58; color: var(--dim); font-weight: 300; flex: 1; }
+.proj-status { display: inline-flex; align-items: center; gap: 7px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.03em; color: var(--dim); }
+.proj-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); flex: none; }
+.proj-status.active .dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(77,158,255,0.12); }
+.proj-meta {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  padding-top: 14px; border-top: 1px solid var(--line);
+  font-family: var(--fm); font-size: 11px; color: var(--dim);
+}
+.proj-meta b { color: var(--text); font-weight: 400; }
+.proj-links { display: flex; gap: 16px; }
+.proj-links a {
+  font-family: var(--fm); font-size: 11.5px; color: var(--dim);
+  text-decoration: none; border-bottom: 1px solid transparent;
+  transition: color 0.25s, border-color 0.25s;
+}
+.proj-links a:hover, .proj-links a:focus-visible { color: var(--text); border-color: var(--line-strong); }
+
+/* expeditions */
+.exp-list { border-top: 1px solid var(--line-strong); }
+.exp-item {
+  display: grid; grid-template-columns: 80px 1fr auto;
+  gap: 24px; align-items: baseline;
+  padding: 22px 0; border-bottom: 1px solid var(--line);
+  text-decoration: none; color: var(--text);
+  transition: padding-left 0.35s var(--ease);
+}
+.exp-item:hover, .exp-item:focus-visible { padding-left: 12px; }
+.exp-num { font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.06em; color: var(--accent); }
+.exp-title { font-size: 17px; font-weight: 400; letter-spacing: -0.01em; }
+.exp-sub { display: block; font-size: 13.5px; color: var(--dim); font-weight: 300; margin-top: 5px; line-height: 1.45; }
+.exp-phase { font-family: var(--fm); font-size: 11px; letter-spacing: 0.04em; color: var(--dim); white-space: nowrap; }
+@media (max-width: 720px) {
+  .exp-item { grid-template-columns: 64px 1fr; gap: 16px; }
+  .exp-phase { display: none; }
+}
+
+/* footer */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 56px 40px;
+  display: flex; flex-wrap: wrap; gap: 40px 60px;
+  justify-content: space-between;
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.03em; color: var(--dim);
+}
+.footer-brand { display: flex; flex-direction: column; gap: 14px; max-width: 300px; }
+.footer-desc { color: var(--dim); font-size: 12px; line-height: 1.6; }
+.footer-nav { display: flex; flex-direction: column; gap: 3px; }
+.footer-nav-label { font-size: 10px; letter-spacing: 0.16em; color: var(--faint); margin-bottom: 10px; text-transform: uppercase; }
+.footer-nav a, .footer-links a {
+  color: var(--dim); text-decoration: none; padding: 4px 0; display: block;
+  transition: color 0.25s;
+}
+.footer-nav a:hover, .footer-nav a:focus-visible,
+.footer-links a:hover, .footer-links a:focus-visible { color: var(--text); }
+.footer-links { display: flex; flex-direction: column; gap: 3px; }
+.footer-legal { width: 100%; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--faint); }
+.footer-legal a { color: var(--faint); text-decoration: none; }
+.footer-legal a:hover { color: var(--dim); }
+@media (max-width: 720px) { .site-footer { padding: 40px 22px; gap: 32px 0; flex-direction: column; } }
+
+/* section spacing mobile */
+@media (max-width: 720px) {
+  .sec { padding: 80px 22px; }
+  .sec-head { margin-bottom: 36px; }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .proj-card, .nav-links a, .exp-item, .proj-links a, .sec-more, .nav-gh,
+  .footer-nav a, .footer-links a { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- ======== NAV ======== -->
+<header class="nav" role="banner">
+  <a class="brand" href="#" aria-label="Unknown Foundation — home">
+    <svg class="logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path class="arc-known" d="M12 3.5 A8.5 8.5 0 0 1 12 20.5"/>
+      <path class="arc-unknown" d="M12 3.5 A8.5 8.5 0 0 0 12 20.5"/>
+      <circle class="core" cx="12" cy="12" r="2.2"/>
+    </svg>
+    UNKNOWN FOUNDATION
+  </a>
+  <nav aria-label="Primary navigation">
+    <ul class="nav-links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#expeditions">Expeditions</a></li>
+      <li><a href="#">Archive</a></li>
+      <li><a href="#">Manifesto</a></li>
+      <li><a href="#">Team</a></li>
+      <li><a href="#">Contribute</a></li>
+    </ul>
+  </nav>
+  <a class="nav-gh" href="https://github.com/unknown-foundation" aria-label="GitHub — unknown-foundation">GitHub ↗</a>
+</header>
+
+<!-- ======== HERO ======== -->
+<main id="main">
+<section class="hero" id="hero" aria-labelledby="wm-foundation">
+  <canvas id="scope" aria-hidden="true" role="presentation"></canvas>
+  <div class="hero-veil" aria-hidden="true"></div>
+
+  <div class="hero-fore">
+    <p class="eyebrow" aria-hidden="true">// OPEN-SOURCE ENGINEERING COLLECTIVE</p>
+    <h1 class="wordmark" id="wm-foundation">
+      <span class="w-unknown">Unknown</span>
+      <span class="w-foundation">Foundation</span>
+    </h1>
+    <p class="tagline">
+      Building experimental software systems in public — exploring unmapped technical territory through research, engineering, and open collaboration.
+    </p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#projects">View Projects →</a>
+      <a class="btn" href="#expeditions">Explore Expeditions</a>
+      <a class="btn" href="https://github.com/unknown-foundation">Contribute on GitHub</a>
+    </div>
+  </div>
+
+  <!-- scope hardware readout overlays -->
+  <div class="scope-hud" aria-hidden="true">
+    <div>SMP&nbsp;&nbsp;44.1kHz</div>
+    <div>SWP&nbsp;&nbsp;50ms/div</div>
+    <div>TRG&nbsp;&nbsp;AUTO ▶</div>
+    <div id="hud-clock">——:——:——</div>
+  </div>
+  <div class="scope-status" aria-hidden="true">
+    <div>CH1&nbsp;&nbsp;COMMITS</div>
+    <div>CH2&nbsp;&nbsp;RELEASES</div>
+    <div>CH3&nbsp;&nbsp;ISSUES</div>
+  </div>
+</section>
+
+<!-- ======== PROJECTS ======== -->
+<section class="sec" id="projects" aria-labelledby="projects-h">
+  <div class="sec-head">
+    <div>
+      <p class="eyebrow">// WHAT WE BUILD</p>
+      <h2 id="projects-h">Projects</h2>
+    </div>
+    <a class="sec-more" href="#">All projects ↗</a>
+  </div>
+  <!-- Metrics shown as honest placeholders. Real values come from the GitHub API pipeline at build time. -->
+  <div class="project-grid" role="list">
+    <article class="proj-card" role="listitem">
+      <div class="proj-top">
+        <span class="proj-code">UF-01</span>
+        <span class="proj-cat">Knowledge Systems</span>
+      </div>
+      <h3 class="proj-name">Knowledge Engine</h3>
+      <p class="proj-desc">Open-source infrastructure for collaborative knowledge systems — durable, queryable, owned by no single node.</p>
+      <span class="proj-status active">
+        <span class="dot" aria-hidden="true"></span>
+        Active Development
+      </span>
+      <div class="proj-meta">
+        <span>★&thinsp;<b>—</b></span>
+        <span><b>Rust</b></span>
+        <span><b>Apache-2.0</b></span>
+        <span>Updated <b>—</b></span>
+      </div>
+      <div class="proj-links">
+        <a href="#">Repository ↗</a>
+        <a href="#">Docs</a>
+        <a href="#">Roadmap</a>
+      </div>
+    </article>
+    <article class="proj-card" role="listitem">
+      <div class="proj-top">
+        <span class="proj-code">UF-02</span>
+        <span class="proj-cat">AI Tooling</span>
+      </div>
+      <h3 class="proj-name">Signal</h3>
+      <p class="proj-desc">A local-first toolkit for reasoning over private corpora without surrendering them to a third party.</p>
+      <span class="proj-status active">
+        <span class="dot" aria-hidden="true"></span>
+        Active Development
+      </span>
+      <div class="proj-meta">
+        <span>★&thinsp;<b>—</b></span>
+        <span><b>TypeScript</b></span>
+        <span><b>MIT</b></span>
+        <span>Updated <b>—</b></span>
+      </div>
+      <div class="proj-links">
+        <a href="#">Repository ↗</a>
+        <a href="#">Docs</a>
+        <a href="#">Roadmap</a>
+      </div>
+    </article>
+    <article class="proj-card" role="listitem">
+      <div class="proj-top">
+        <span class="proj-code">UF-03</span>
+        <span class="proj-cat">Developer Infrastructure</span>
+      </div>
+      <h3 class="proj-name">Driftwood</h3>
+      <p class="proj-desc">Deterministic build &amp; replay for distributed systems — make the non-reproducible reproducible.</p>
+      <span class="proj-status">
+        <span class="dot" aria-hidden="true"></span>
+        Early Research
+      </span>
+      <div class="proj-meta">
+        <span>★&thinsp;<b>—</b></span>
+        <span><b>Go</b></span>
+        <span><b>Apache-2.0</b></span>
+        <span>Updated <b>—</b></span>
+      </div>
+      <div class="proj-links">
+        <a href="#">Repository ↗</a>
+        <a href="#">Docs</a>
+        <a href="#">Roadmap</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ======== EXPEDITIONS ======== -->
+<div class="sec-divide" aria-hidden="true"></div>
+<section class="sec" id="expeditions" aria-labelledby="exp-h">
+  <div class="sec-head">
+    <div>
+      <p class="eyebrow">// FIELD NOTES FROM THE UNMAPPED</p>
+      <h2 id="exp-h">Expeditions</h2>
+    </div>
+    <a class="sec-more" href="#">All expeditions ↗</a>
+  </div>
+  <nav class="exp-list" aria-label="Recent expeditions">
+    <a class="exp-item" href="#">
+      <span class="exp-num">EXP-01</span>
+      <span>
+        <span class="exp-title">Distributed intelligence without central ownership</span>
+        <span class="exp-sub">How can independent nodes coordinate knowledge with no authority in the middle? Architecture exploration + working prototype.</span>
+      </span>
+      <span class="exp-phase">In progress</span>
+    </a>
+    <a class="exp-item" href="#">
+      <span class="exp-num">EXP-02</span>
+      <span>
+        <span class="exp-title">Making the non-reproducible reproducible</span>
+        <span class="exp-sub">Deterministic capture &amp; replay for distributed systems that refuse to behave the same way twice.</span>
+      </span>
+      <span class="exp-phase">Results published</span>
+    </a>
+    <a class="exp-item" href="#">
+      <span class="exp-num">EXP-03</span>
+      <span>
+        <span class="exp-title">Reasoning over a corpus you never hand over</span>
+        <span class="exp-sub">Local-first retrieval augmentation where the data never leaves the building. Findings and failure modes.</span>
+      </span>
+      <span class="exp-phase">Prototype</span>
+    </a>
+  </nav>
+</section>
+</main>
+
+<!-- ======== FOOTER ======== -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-brand">
+    <a class="brand" href="#" aria-label="Unknown Foundation — home">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path class="arc-known" d="M12 3.5 A8.5 8.5 0 0 1 12 20.5"/>
+        <path class="arc-unknown" d="M12 3.5 A8.5 8.5 0 0 0 12 20.5"/>
+        <circle class="core" cx="12" cy="12" r="2.2"/>
+      </svg>
+      UNKNOWN FOUNDATION
+    </a>
+    <p class="footer-desc">A small open-source engineering collective building experimental software systems in public.</p>
+  </div>
+  <nav class="footer-nav" aria-label="Site sections">
+    <p class="footer-nav-label">Navigate</p>
+    <a href="#projects">Projects</a>
+    <a href="#expeditions">Expeditions</a>
+    <a href="#">Archive</a>
+    <a href="#">Manifesto</a>
+    <a href="#">Team</a>
+    <a href="#">Contribute</a>
+  </nav>
+  <div class="footer-links">
+    <p class="footer-nav-label">Resources</p>
+    <a href="https://github.com/unknown-foundation">GitHub ↗</a>
+    <a href="#">Documentation ↗</a>
+    <a href="#">Contribution Guide</a>
+    <a href="#">Code of Conduct</a>
+    <a href="#">License</a>
+  </div>
+  <div class="footer-legal">
+    <span>© 2026 Unknown Foundation. Apache-2.0 · MIT</span>
+    <span>Last deploy — &middot; build —</span>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   TELEMETRY OSCILLOSCOPE ENGINE
+   ----------------------------------------------------------------
+   Three-channel live waveform display. Renders the foundation's
+   activity (commits / releases / issues) as a continuous signal
+   on a phosphor-style canvas. The signal draws itself, breathes,
+   and reads as a living instrument — not decoration.
+
+   Architecture:
+   - Ring buffer per channel (Float32Array), length = W * oversample
+   - Each frame: advance sample pointer by SWEEP_PX_PER_FRAME samples
+   - Signal generation functions produce plausible waveforms:
+       COMMITS  — irregular spikes w/ cluster behaviour
+       RELEASES — rare broad plateaus
+       ISSUES   — slow baseline oscillation + closure notches
+   - Rendering: walk the ring buffer, map to Y, draw path
+   - Phosphor: line drawn with a left-to-right alpha gradient
+     (oldest samples = faint, newest = bright)
+   - Graticule: fine dotted grid, very low opacity
+   - HUD overlays injected via DOM (HTML elements, not canvas)
+   - Tab hidden → pause rAF; tab visible → resume
+   - prefers-reduced-motion → draw one static snapshot, no rAF
+   ================================================================ */
+(function () {
+  'use strict';
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv = document.getElementById('scope');
+  var hero = document.getElementById('hero');
+  if (!cv || !hero) return;
+
+  var ctx = cv.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0;
+  var running = false;
+  var raf = 0;
+  var t = 0; // time accumulator in seconds
+
+  /* ---- seeded PRNG (xorshift32, deterministic) ---- */
+  var seed = 0x4D9EFF2A;
+  function rand() {
+    seed ^= seed << 13;
+    seed ^= seed >> 17;
+    seed ^= seed << 5;
+    return (seed >>> 0) / 4294967296;
+  }
+  function randGaussian() {
+    // Box-Muller
+    var u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  /* ---- ring buffers ---- */
+  var RING = 4096; // power of two for fast modulo
+  var RING_MASK = RING - 1;
+  var ch = [
+    new Float32Array(RING), // CH1 COMMITS
+    new Float32Array(RING), // CH2 RELEASES
+    new Float32Array(RING)  // CH3 ISSUES
+  ];
+  var head = 0; // current write index (shared across all channels)
+  var totalSamples = 0;
+
+  /* ---- signal generator state ---- */
+  var commitPhase = 0;
+  var releasePhase = 0;
+  var releasePulseActive = false;
+  var releasePulseT = 0;
+  var issuePhase = 0;
+  var issueNotchActive = false;
+  var issueNotchT = 0;
+  var commitBurstActive = false;
+  var commitBurstT = 0;
+  var commitBurstCount = 0;
+
+  /* generate one sample for each channel at time T (in seconds) */
+  function generateSample(dt) {
+    var s0, s1, s2;
+
+    /* --- CH1: COMMITS --- */
+    commitPhase += dt;
+    var base0 = 0.04 * Math.sin(commitPhase * 0.7 + 0.3) + 0.02 * rand() - 0.01;
+    // burst: trigger randomly at ~0.8 Hz, cluster of 3-6 spikes
+    if (!commitBurstActive && rand() < dt * 0.8) {
+      commitBurstActive = true;
+      commitBurstT = 0;
+      commitBurstCount = Math.floor(rand() * 4) + 2;
+    }
+    var spike0 = 0;
+    if (commitBurstActive) {
+      commitBurstT += dt;
+      var burstLocal = commitBurstT * commitBurstCount * 2.2;
+      var spk = Math.exp(-Math.pow((burstLocal % 1) * 3.8 - 1.9, 2) * 4.5);
+      spike0 = spk * (0.5 + rand() * 0.35);
+      if (commitBurstT > commitBurstCount * 0.18) commitBurstActive = false;
+    }
+    s0 = base0 + spike0;
+
+    /* --- CH2: RELEASES --- */
+    releasePhase += dt;
+    var base1 = 0.015 + 0.008 * Math.sin(releasePhase * 0.15);
+    if (!releasePulseActive && rand() < dt * 0.15) {
+      releasePulseActive = true;
+      releasePulseT = 0;
+    }
+    var pulse1 = 0;
+    if (releasePulseActive) {
+      releasePulseT += dt;
+      var rise = Math.min(releasePulseT / 0.08, 1);
+      var fall = releasePulseT > 0.6 ? Math.max(1 - (releasePulseT - 0.6) / 0.12, 0) : 1;
+      pulse1 = rise * fall * 0.85;
+      if (releasePulseT > 0.72) releasePulseActive = false;
+    }
+    s1 = base1 + pulse1;
+
+    /* --- CH3: ISSUES --- */
+    issuePhase += dt;
+    // slow rolling baseline
+    var base2 = 0.18 * Math.sin(issuePhase * 0.22 + 0.8)
+              + 0.09 * Math.sin(issuePhase * 0.38 + 2.1)
+              + 0.03 * rand() - 0.015;
+    // closure notch: sudden dip
+    if (!issueNotchActive && rand() < dt * 0.35) {
+      issueNotchActive = true;
+      issueNotchT = 0;
+    }
+    var notch2 = 0;
+    if (issueNotchActive) {
+      issueNotchT += dt;
+      var dip = Math.exp(-Math.pow(issueNotchT * 14 - 1.0, 2) * 2.2);
+      notch2 = -dip * 0.55;
+      if (issueNotchT > 0.35) issueNotchActive = false;
+    }
+    s2 = base2 + notch2;
+
+    /* write to ring buffers */
+    ch[0][head & RING_MASK] = Math.max(-0.98, Math.min(0.98, s0));
+    ch[1][head & RING_MASK] = Math.max(-0.98, Math.min(0.98, s1));
+    ch[2][head & RING_MASK] = Math.max(-0.98, Math.min(0.98, s2));
+    head++;
+    totalSamples++;
+  }
+
+  /* ---- seed the ring buffers with enough history so the canvas is full on first render ---- */
+  function prewarm() {
+    var sampleRate = 120; // synthetic samples per second (not real Hz)
+    var warmSec = 20; // fill 20 seconds of history
+    var n = sampleRate * warmSec;
+    for (var i = 0; i < n; i++) generateSample(1 / sampleRate);
+  }
+
+  /* ---- resize ---- */
+  function resize() {
+    W = cv.width  = Math.round(hero.clientWidth  * DPR);
+    H = cv.height = Math.round(hero.clientHeight * DPR);
+    cv.style.width  = hero.clientWidth  + 'px';
+    cv.style.height = hero.clientHeight + 'px';
+  }
+
+  /* ---- graticule ---- */
+  function drawGraticule() {
+    var divX = 8, divY = 12; // graticule divisions
+    ctx.save();
+    ctx.setLineDash([2 * DPR, 6 * DPR]);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(77,158,255,0.055)';
+    // vertical lines
+    for (var i = 1; i < divX; i++) {
+      var x = (W / divX) * i;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    // horizontal lines per channel lane (3 lanes)
+    for (var ch_idx = 0; ch_idx < 3; ch_idx++) {
+      var laneY0 = (H / 3) * ch_idx;
+      var laneH  = H / 3;
+      for (var j = 0; j <= divY; j++) {
+        var y = laneY0 + (laneH / divY) * j;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  /* ---- channel separator lines ---- */
+  function drawSeparators() {
+    ctx.save();
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
+    ctx.strokeStyle = 'rgba(77,158,255,0.1)';
+    for (var i = 1; i < 3; i++) {
+      var y = (H / 3) * i;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* ---- channel labels (left edge) ---- */
+  function drawLabels() {
+    ctx.save();
+    ctx.font = (DPR * 9) + 'px "Geist Mono", monospace';
+    ctx.letterSpacing = (DPR * 1.2) + 'px';
+    var labels = ['CH1  COMMITS', 'CH2  RELEASES', 'CH3  ISSUES'];
+    var colors = ['rgba(77,158,255,0.55)', 'rgba(77,158,255,0.45)', 'rgba(77,158,255,0.45)'];
+    for (var i = 0; i < 3; i++) {
+      var laneY0 = (H / 3) * i;
+      ctx.fillStyle = colors[i];
+      ctx.fillText(labels[i], 10 * DPR, laneY0 + 16 * DPR);
+    }
+    ctx.restore();
+  }
+
+  /* ---- draw a single channel waveform ---- */
+  function drawChannel(chIdx, amplitudePx, samplesVisible) {
+    var laneH  = H / 3;
+    var laneY0 = laneH * chIdx;
+    var centerY = laneY0 + laneH * 0.5;
+    var buf = ch[chIdx];
+
+    // How many samples to display = samplesVisible (clamped to ring size)
+    var n = Math.min(samplesVisible, RING - 1);
+
+    ctx.save();
+
+    // Glow pass — wider line, low opacity, blur via shadow
+    ctx.shadowColor = 'rgba(77,158,255,0.5)';
+    ctx.shadowBlur  = 10 * DPR;
+    ctx.lineWidth   = 2.5 * DPR;
+    ctx.strokeStyle = 'rgba(77,158,255,0.18)';
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var sIdx = (head - n + i) & RING_MASK;
+      var x = (i / (n - 1)) * W;
+      var y = centerY - buf[sIdx] * amplitudePx;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Main signal pass — gradient alpha for phosphor persistence effect
+    ctx.shadowBlur = 0;
+    ctx.lineWidth  = 1.5 * DPR;
+    // Build a gradient: old samples are dim, new samples are bright
+    var grad = ctx.createLinearGradient(0, 0, W, 0);
+    grad.addColorStop(0,    'rgba(77,158,255,0.03)');
+    grad.addColorStop(0.45, 'rgba(77,158,255,0.15)');
+    grad.addColorStop(0.78, 'rgba(77,158,255,0.55)');
+    grad.addColorStop(0.92, 'rgba(77,158,255,0.80)');
+    grad.addColorStop(0.98, 'rgba(133,196,255,0.95)');
+    grad.addColorStop(1,    'rgba(190,225,255,1.0)');
+    ctx.strokeStyle = grad;
+    ctx.beginPath();
+    for (var j = 0; j < n; j++) {
+      var sIdxJ = (head - n + j) & RING_MASK;
+      var xj = (j / (n - 1)) * W;
+      var yj = centerY - buf[sIdxJ] * amplitudePx;
+      if (j === 0) ctx.moveTo(xj, yj); else ctx.lineTo(xj, yj);
+    }
+    ctx.stroke();
+
+    // Leading edge: bright sharp tip at the rightmost sample
+    var tipIdx = (head - 1) & RING_MASK;
+    var tipY   = centerY - buf[tipIdx] * amplitudePx;
+    ctx.shadowColor = 'rgba(200,230,255,0.9)';
+    ctx.shadowBlur  = 16 * DPR;
+    ctx.fillStyle   = 'rgba(210,235,255,0.95)';
+    ctx.beginPath();
+    ctx.arc(W, tipY, 2.5 * DPR, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  /* ---- draw baseline zero line per channel ---- */
+  function drawZeroLines() {
+    ctx.save();
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4 * DPR, 8 * DPR]);
+    ctx.strokeStyle = 'rgba(77,158,255,0.07)';
+    for (var i = 0; i < 3; i++) {
+      var laneH  = H / 3;
+      var centerY = laneH * i + laneH * 0.5;
+      ctx.beginPath(); ctx.moveTo(0, centerY); ctx.lineTo(W, centerY); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* ---- update HUD clock ---- */
+  var hudClock = document.getElementById('hud-clock');
+  function updateClock() {
+    if (!hudClock) return;
+    var d = new Date();
+    var hh = String(d.getUTCHours()).padStart(2,'0');
+    var mm = String(d.getUTCMinutes()).padStart(2,'0');
+    var ss = String(d.getUTCSeconds()).padStart(2,'0');
+    hudClock.textContent = hh + ':' + mm + ':' + ss + ' UTC';
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  /* ---- main render loop ---- */
+  var lastTime = null;
+  var SAMPLES_PER_SEC = 120; // synthetic sample rate
+
+  function frame(now) {
+    if (lastTime === null) lastTime = now;
+    var dt = Math.min((now - lastTime) * 0.001, 0.05); // cap at 50ms
+    lastTime = now;
+
+    // Generate new samples proportional to elapsed time
+    var newSamples = Math.round(dt * SAMPLES_PER_SEC);
+    for (var i = 0; i < newSamples; i++) generateSample(1 / SAMPLES_PER_SEC);
+
+    // How many historical samples to display (fill the canvas width)
+    var samplesVisible = Math.floor(W / DPR * 1.8);
+    var amplitudePx    = (H / 3) * 0.36; // 36% of lane height = full deflection
+
+    ctx.clearRect(0, 0, W, H);
+
+    drawGraticule();
+    drawZeroLines();
+    drawSeparators();
+
+    drawChannel(0, amplitudePx, samplesVisible);
+    drawChannel(1, amplitudePx, samplesVisible);
+    drawChannel(2, amplitudePx, samplesVisible);
+
+    drawLabels();
+
+    if (running) raf = requestAnimationFrame(frame);
+  }
+
+  /* ---- static snapshot for prefers-reduced-motion ---- */
+  function drawStatic() {
+    // Generate enough samples to fill the view
+    var samplesVisible = Math.floor(W / DPR * 1.8);
+    while (totalSamples < samplesVisible + 100) generateSample(1 / SAMPLES_PER_SEC);
+
+    var amplitudePx = (H / 3) * 0.36;
+    ctx.clearRect(0, 0, W, H);
+    drawGraticule();
+    drawZeroLines();
+    drawSeparators();
+    drawChannel(0, amplitudePx, samplesVisible);
+    drawChannel(1, amplitudePx, samplesVisible);
+    drawChannel(2, amplitudePx, samplesVisible);
+    drawLabels();
+  }
+
+  /* ---- lifecycle ---- */
+  function start() {
+    if (!running) {
+      running = true;
+      lastTime = null;
+      raf = requestAnimationFrame(frame);
+    }
+  }
+  function stop() {
+    running = false;
+    cancelAnimationFrame(raf);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop();
+    else if (!reduce) start();
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    if (reduce) drawStatic();
+  });
+
+  /* ---- init ---- */
+  resize();
+  prewarm();
+  if (reduce) {
+    drawStatic();
+  } else {
+    start();
+  }
+
+})();
+</script>
+</body>
+</html>

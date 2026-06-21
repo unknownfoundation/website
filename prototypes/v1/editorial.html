@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="amber">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UF — Direction 02 · Editorial Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="palette.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-display);-webkit-font-smoothing:antialiased;transition:background .6s var(--ease)}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .sheet{max-width:1200px;margin:0 auto;padding:0 48px;min-height:100vh;display:flex;flex-direction:column}
+  .masthead{display:flex;justify-content:space-between;align-items:center;padding:26px 0;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--text-dim);border-bottom:1px solid var(--line)}
+  .masthead b{color:var(--text);font-weight:500}
+  .masthead .est{color:var(--text-dim)}                       /* amber stripped — see "amber as event" */
+  .lead{flex:1;display:flex;flex-direction:column;justify-content:center;padding:72px 0}
+  .eyebrow{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.16em;color:var(--text-dim);margin-bottom:34px}
+  .eyebrow .d{color:var(--text-dim)}                           /* amber stripped */
+  h1{font-size:clamp(48px,8vw,118px);font-weight:500;line-height:.96;letter-spacing:-.03em;margin-bottom:8px}
+  h1 .sub{display:block;color:var(--text-dim);font-weight:300;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px var(--dim)}  /* outline raised faint->dim for legibility */
+  .cols{display:grid;grid-template-columns:1.1fr .9fr;gap:80px;margin-top:64px;align-items:start}
+  @media(max-width:820px){.cols{grid-template-columns:1fr;gap:48px}}
+  .lede{font-size:clamp(17px,1.6vw,20px);line-height:1.6;color:var(--text-dim);font-weight:300;max-width:480px}
+  .lede b{color:var(--text);font-weight:400}
+  .actions{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{font-family:var(--font-mono);font-size:13px;padding:13px 20px;border:1px solid var(--line-strong);border-radius:2px;color:var(--text);text-decoration:none;transition:border-color .4s var(--ease),color .4s var(--ease)}
+  .btn--p{border-color:rgba(var(--glow),.55);color:var(--accent)}     /* the one amber action */
+  .btn:hover,.btn:focus-visible{border-color:var(--text-dim)}
+  .btn--p:hover,.btn--p:focus-visible{border-color:var(--accent);color:var(--accent)}   /* keep amber on the primary */
+  .index{border-top:1px solid var(--line-strong)}
+  .index a{display:flex;align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--text);transition:padding .4s var(--ease),color .4s var(--ease)}
+  .index a:hover,.index a:focus-visible{padding-left:10px;color:var(--text)}    /* amber stripped from hover */
+  .index .n{font-family:var(--font-mono);font-size:12px;color:var(--text-dim)}   /* faint -> dim (AA) */
+  .index .t{flex:1;font-size:18px;font-weight:400}
+  .index .c{font-family:var(--font-mono);font-size:12px;color:var(--text-dim)}   /* faint -> dim (AA) */
+  .site-footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;padding:24px 0 84px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--text-dim)}  /* faint -> dim */
+  .site-footer a{color:var(--text-dim);text-decoration:none;transition:color .3s}
+  .site-footer a:hover,.site-footer a:focus-visible{color:var(--text)}
+  .tag{position:fixed;right:18px;bottom:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);z-index:60}
+  @keyframes rise{from{opacity:0;clip-path:inset(100% 0 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .anim{opacity:0;animation:rise var(--slow) var(--ease) forwards}
+  .actions.anim{animation-name:fade}    /* bordered buttons fade only — no border wipe */
+  .d1{animation-delay:80ms}.d2{animation-delay:220ms}.d3{animation-delay:400ms}.d4{animation-delay:600ms}
+  @media(prefers-reduced-motion:reduce){.anim{animation:none;opacity:1;clip-path:none}body,.btn,.index a,.site-footer a{transition:none}}
+</style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="sheet">
+    <header class="masthead">
+      <span><b>◆ UNKNOWN FOUNDATION</b></span>
+      <span><span class="est">EST. 2026</span> · OPEN-SOURCE ENGINEERING COLLECTIVE</span>
+    </header>
+    <main id="main" class="lead">
+      <p class="eyebrow anim d1"><span class="d" aria-hidden="true">//</span> RESEARCH · ENGINEERING · OPEN SOURCE</p>
+      <h1 class="anim d2">Unknown<br><span class="sub">Foundation</span></h1>
+      <div class="cols">
+        <div>
+          <p class="lede anim d3">A small open-source engineering collective <b>building experimental software systems in public.</b> We explore technical territory that is not yet mapped, understood, or productized — and publish what we find.</p>
+          <div class="actions anim d4">
+            <a class="btn btn--p" href="#">View Projects →</a>
+            <a class="btn" href="#">Explore Expeditions</a>
+          </div>
+        </div>
+        <nav class="index anim d4" aria-label="Sections">
+          <a href="#"><span class="n">01</span><span class="t">Projects</span><span class="c">12</span></a>
+          <a href="#"><span class="n">02</span><span class="t">Expeditions</span><span class="c">08</span></a>
+          <a href="#"><span class="n">03</span><span class="t">Archive</span><span class="c">34</span></a>
+          <a href="#"><span class="n">04</span><span class="t">Manifesto</span><span class="c">—</span></a>
+          <a href="#"><span class="n">05</span><span class="t">Team</span><span class="c">06</span></a>
+          <a href="#"><span class="n">06</span><span class="t">Contribute</span><span class="c">↗</span></a>
+        </nav>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <span>APACHE-2.0 · MIT</span>
+      <nav aria-label="Footer"><a href="#">github.com/unknown-foundation ↗</a></nav>
+    </footer>
+  </div>
+  <div class="tag" aria-hidden="true">DIRECTION 02 — EDITORIAL INDEX</div>
+
+  <div class="palette-switch" role="group" aria-label="Color palette">
+    <span class="lbl">PALETTE</span>
+    <button type="button" data-p="amber" aria-label="Amber palette"><span class="sw" style="background:#E0A24A"></span><span>Amber</span></button>
+    <button type="button" data-p="graphite" aria-label="Graphite palette"><span class="sw" style="background:#C6C6CC"></span><span>Graphite</span></button>
+    <button type="button" data-p="nocturne" aria-label="Nocturne palette"><span class="sw" style="background:#6E9BD8"></span><span>Nocturne</span></button>
+    <button type="button" data-p="patina" aria-label="Patina palette"><span class="sw" style="background:#5FA391"></span><span>Patina</span></button>
+  </div>
+<script src="palette.js"></script>
+</body>
+</html>

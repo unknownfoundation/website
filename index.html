@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="amber">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark" />
+<title>Unknown Foundation — Prototype index</title>
+<meta name="description" content="Prototype directions for the Unknown Foundation website: the selected site, plus the two exploration rounds (v1 hero directions, v2 full-site mockups) it grew from." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M12 9 H8 V25 H12' fill='none' stroke='%23E0A24A' stroke-width='2.6'/%3E%3Cpath d='M20 4 H24 V20 H20' fill='none' stroke='%23E0A24A' stroke-width='2.6'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* tokens — mirrors the selected site's amber palette (palette.css) */
+  :root{
+    --bg:#0A0908; --text:#ECE8E1; --dim:#8B8782; --faint:#595550;
+    --accent:#E0A24A; --glow:224,162,74;
+    --line:rgba(236,232,225,0.08); --line-strong:rgba(236,232,225,0.14);
+    --fd:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --fm:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --ease:cubic-bezier(0.16,1,0.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--fd);-webkit-font-smoothing:antialiased;line-height:1.5;min-height:100vh}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 7vw 9vh}
+
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 22px;margin-bottom:7vh;border-bottom:1px solid var(--line)}
+  .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:12px;letter-spacing:.06em;color:var(--dim);text-decoration:none;font-weight:500}
+  .brand .logo{width:20px;height:20px;flex:none}
+  .brand .logo path{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .brand .un{color:var(--dim)} .brand .kn{color:var(--accent)} .brand .fo{color:var(--text)}
+  .brand:hover .kn{color:var(--text)}
+  .nav .here{font-family:var(--fm);font-size:12px;color:var(--faint);letter-spacing:.04em}
+
+  /* header */
+  .head{margin-bottom:9vh;max-width:760px}
+  .eyebrow{font-family:var(--fm);font-size:12.5px;letter-spacing:.16em;color:var(--dim);margin-bottom:20px}
+  .eyebrow .d{color:var(--accent)}
+  h1{font-size:clamp(34px,5vw,56px);font-weight:500;letter-spacing:-.02em;line-height:1.04;margin-bottom:22px}
+  .head .lead{color:var(--dim);font-size:16px;line-height:1.6;font-weight:300;max-width:690px}
+  .head .lead em{color:var(--text);font-style:normal}
+  .head .meta{margin-top:20px;font-family:var(--fm);font-size:12px;color:var(--faint);letter-spacing:.02em;line-height:1.8;max-width:690px}
+  .head .meta b{color:var(--accent);font-weight:400}
+
+  /* group */
+  .group{margin-bottom:7vh}
+  .group-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px}
+  .group-head .gl{font-family:var(--fm);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text)}
+  .group-head .gl .v{color:var(--accent)}
+  .group-head .gs{font-family:var(--fm);font-size:12px;color:var(--dim);letter-spacing:.02em}
+  .group-head .gc{font-family:var(--fm);font-size:12px;color:var(--faint);white-space:nowrap}
+
+  /* list of rows (link pattern carried from the v1 index) */
+  .list{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .row{background:var(--bg);display:grid;grid-template-columns:54px 1fr auto;gap:24px;align-items:center;padding:25px 28px;text-decoration:none;color:var(--text);transition:background .4s var(--ease)}
+  .row:hover,.row:focus-visible{background:#121010;outline:none}
+  .row .n{font-family:var(--fm);font-size:13px;color:var(--accent)}
+  .row .body h2{font-size:20px;font-weight:500;margin-bottom:7px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .row .body p{font-size:14px;line-height:1.55;color:var(--dim);font-weight:300;max-width:640px}
+  .row .body .tradeoff{color:var(--faint);font-family:var(--fm);font-size:12px;margin-top:9px;letter-spacing:.02em}
+  .row .go{font-family:var(--fm);font-size:13px;color:var(--dim);white-space:nowrap;transition:color .3s}
+  .row:hover .go,.row:focus-visible .go{color:var(--accent)}
+
+  /* chips */
+  .tag{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:.1em;padding:3px 8px;border-radius:2px;border:1px solid var(--line-strong);color:var(--dim);white-space:nowrap}
+  .tag.dark{color:var(--accent);border-color:rgba(224,162,74,.35)}
+  .tag.light{color:#e8e4da}
+  .tag.medium{color:#9fb0c0}
+  .tag.ml{color:#bcd0c4}
+  .badge{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:.08em;color:var(--accent);border:1px solid rgba(224,162,74,.4);border-radius:2px;padding:3px 8px}
+
+  /* featured (selected) row */
+  .row.feat{background:rgba(224,162,74,.045);box-shadow:inset 3px 0 0 var(--accent)}
+  .row.feat:hover,.row.feat:focus-visible{background:rgba(224,162,74,.08)}
+  .row.feat .body h2{font-size:23px}
+  .row.feat .body p{color:var(--dim);max-width:680px}
+
+  /* footer */
+  .foot{margin-top:8vh;padding-top:26px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:14px 26px;justify-content:space-between;font-family:var(--fm);font-size:12px;color:var(--dim);letter-spacing:.03em}
+  .foot a{color:var(--dim);text-decoration:none}
+  .foot a:hover{color:var(--accent)}
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  @media(max-width:680px){
+    .row{grid-template-columns:30px 1fr;gap:14px;padding:22px 18px;align-items:start}
+    .row .go{display:none}
+    .row .body h2{font-size:18px}
+    .row.feat .body h2{font-size:20px}
+    .group-head{flex-wrap:wrap;gap:6px}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="nav">
+      <a class="brand" href="#" aria-label="Unknown Foundation — home">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M12 9 H8 V25 H12"/><path d="M20 4 H24 V20 H20"/></svg>
+        <span><span class="un">UN</span><span class="kn">KNOWN</span> <span class="fo">FOUNDATION</span></span>
+      </a>
+      <span class="here">prototype index</span>
+    </header>
+
+    <div class="head">
+      <p class="eyebrow"><span class="d">//</span> UNKNOWN FOUNDATION — PROTOTYPE INDEX</p>
+      <h1>Three groups, one direction.</h1>
+      <p class="lead">The <em>selected</em> site, plus the two exploration rounds it grew from. These aren't A/B tests — they're successive rounds: <em>v1</em> explored the wordmark and mood, <em>v2</em> built complete pages across four tonal themes, and the selected site synthesises the dark token field and the live terminal into one.</p>
+      <p class="meta">Every prototype opens in a new tab. The v1 directions and the selected site carry a live palette switcher — <b>Amber</b> · <b>Graphite</b> · <b>Nocturne</b> · <b>Patina</b> — at the bottom of each page. Judge the feel, not the pixel polish.</p>
+    </div>
+
+    <!-- GROUP 1 — SELECTED -->
+    <section class="group" aria-labelledby="g-pick">
+      <div class="group-head">
+        <span class="gl" id="g-pick">★ Selected</span>
+        <span class="gs">the shipping direction</span>
+        <span class="gc">1</span>
+      </div>
+      <div class="list">
+        <a class="row feat" href="prototypes/site-1-cli.html" target="_blank" rel="noopener">
+          <span class="n">→</span>
+          <div class="body">
+            <h2>Field + CLI <span class="badge">SELECTED</span></h2>
+            <p>The shipping homepage. A cursor-reactive token field drifts behind the wordmark, and a live terminal lets you navigate by command — the organisation rendered as a filesystem. Full IA: Projects, Manifesto, Articles, Activity.</p>
+            <div class="tradeoff">dark · amber · hand-built · the synthesis of v1's field + v2's terminal</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- GROUP 2 — v1 -->
+    <section class="group" aria-labelledby="g-v1">
+      <div class="group-head">
+        <span class="gl" id="g-v1"><span class="v">v1</span> — Hero &amp; brand directions</span>
+        <span class="gs">early compositions on one wordmark</span>
+        <span class="gc">5</span>
+      </div>
+      <div class="list">
+        <a class="row" href="prototypes/v1/depth-field.html" target="_blank" rel="noopener">
+          <span class="n">01</span>
+          <div class="body">
+            <h2>Depth Field</h2>
+            <p>Layered parallax — foreground text recedes into a dark field as you scroll; "Unknown" sits deeper than "Foundation." The atmospheric base the final hero grew from.</p>
+            <div class="tradeoff">most immersive · 4 palettes in one</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v1/editorial.html" target="_blank" rel="noopener">
+          <span class="n">02</span>
+          <div class="body">
+            <h2>Editorial Index</h2>
+            <p>A research journal's front matter: restrained type, a masthead, a contents index with counts. Almost no atmosphere — pure credibility.</p>
+            <div class="tradeoff">most dev-trusted · safest · least "world"</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v1/survey.html" target="_blank" rel="noopener">
+          <span class="n">03</span>
+          <div class="body">
+            <h2>Cartographic Survey</h2>
+            <p>An expedition instrument panel: a coordinate frame, a live survey readout that tracks your cursor, a plotted marker. Leans hardest into the name.</p>
+            <div class="tradeoff">most on-name · technical · risk of feeling busy</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v1/void.html" target="_blank" rel="noopener">
+          <span class="n">04</span>
+          <div class="body">
+            <h2>The Void</h2>
+            <p>Atmosphere through emptiness, not effects. Vast near-black, one point of light, the wordmark low in the corner. Calm, confident, a little mysterious.</p>
+            <div class="tradeoff">most calm / restrained · risk of too sparse</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v1/home.html" target="_blank" rel="noopener">
+          <span class="n">05</span>
+          <div class="body">
+            <h2>Home — resolving field</h2>
+            <p>The hand-built reference home: the original cursor-reactive resolving field that everything else was measured against, and that the selected site's hero descends from.</p>
+            <div class="tradeoff">reference build · origin of the field</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- GROUP 3 — v2 -->
+    <section class="group" aria-labelledby="g-v2">
+      <div class="group-head">
+        <span class="gl" id="g-v2"><span class="v">v2</span> — Full-site mockups</span>
+        <span class="gs">complete pages across four tonal themes</span>
+        <span class="gc">9</span>
+      </div>
+      <div class="list">
+        <a class="row" href="prototypes/v2/dark-field.html" target="_blank" rel="noopener">
+          <span class="n">01</span>
+          <div class="body">
+            <h2><span class="tag dark">DARK</span> Dark Field</h2>
+            <p>Cursor-reactive resolving field — ~180 amber-tinged points drift with independent phase oscillation. The direct ancestor of the selected hero.</p>
+            <div class="tradeoff">the lineage pick · near-black / amber</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/dark-telemetry.html" target="_blank" rel="noopener">
+          <span class="n">02</span>
+          <div class="body">
+            <h2><span class="tag dark">DARK</span> Dark Telemetry</h2>
+            <p>A live three-channel oscilloscope canvas spanning the full hero — engineering rendered as a signal you can watch.</p>
+            <div class="tradeoff">instrument / signal</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/ml-blueprint.html" target="_blank" rel="noopener">
+          <span class="n">03</span>
+          <div class="body">
+            <h2><span class="tag ml">MEDIUM-LIGHT</span> Blueprint</h2>
+            <p>A drafting-paper register: a live draughting grid with cursor crosshairs tracking on inertia. Ink-on-navy, the lightest dark in the set.</p>
+            <div class="tradeoff">draughting ground</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/medium-terminal.html" target="_blank" rel="noopener">
+          <span class="n">04</span>
+          <div class="body">
+            <h2><span class="tag medium">MEDIUM</span> Engineering in Public</h2>
+            <p>A living terminal log in the hero — a calm, monospaced build/research feed that streams over time. The device that informed the selected CLI.</p>
+            <div class="tradeoff">terminal feed · seeded the navigator</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/medium-cartographic.html" target="_blank" rel="noopener">
+          <span class="n">05</span>
+          <div class="body">
+            <h2><span class="tag medium">MEDIUM</span> Cartographic Atlas</h2>
+            <p>An interactive, pannable coordinate atlas with six surveyed stations plotting projects (UF-01/02/03) and expeditions (EXP-01/02/03).</p>
+            <div class="tradeoff">on-name · map</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/light-press.html" target="_blank" rel="noopener">
+          <span class="n">06</span>
+          <div class="body">
+            <h2><span class="tag light">LIGHT</span> Light Press</h2>
+            <p>A printing-press clip-path wipe: every block presses in left-to-right, timed to feel like ink pressed onto paper. Cool-warm light stock.</p>
+            <div class="tradeoff">press reveal · scroll-driven</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/light-specimen.html" target="_blank" rel="noopener">
+          <span class="n">07</span>
+          <div class="body">
+            <h2><span class="tag light">LIGHT</span> Light Specimen</h2>
+            <p>Archival catalog grammar rendered as a tactile system: a cursor-reactive registration-rule grid drifts behind the hero. A type-specimen register.</p>
+            <div class="tradeoff">type-specimen</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/light-tactile.html" target="_blank" rel="noopener">
+          <span class="n">08</span>
+          <div class="body">
+            <h2><span class="tag light">LIGHT</span> Light Tactile</h2>
+            <p>A parallax paper stack with card-tilt under continuous pointer physics. Warm-white stock, terracotta accent — the most physical of the lights.</p>
+            <div class="tradeoff">paper physics</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+        <a class="row" href="prototypes/v2/light-wild.html" target="_blank" rel="noopener">
+          <span class="n">09</span>
+          <div class="body">
+            <h2><span class="tag light">LIGHT</span> Light Wild</h2>
+            <p>A typographic frequency field: a dense, stable grid of domain notation — coordinates, protocol tokens, uncertainty marks — rendered behind the hero.</p>
+            <div class="tradeoff">frequency field</div>
+          </div>
+          <span class="go">Open ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>Unknown Foundation — prototype index</span>
+      <span>15 prototypes · 1 selected · v1 [5] · v2 [9]</span>
+      <a href="https://github.com/unknown-foundation" rel="noopener">github.com/unknown-foundation ↗</a>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unknown Foundation</title>
+<meta name="description" content="A small open source engineering collective building experimental software systems in public.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@300..500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --bg:          #F7F4EE;
+  --bg-raised:   #F0EDE6;
+  --ink:         #141210;
+  --ink-2:       #3D3A35;
+  --ink-3:       #7A756D;
+  --ink-4:       #B0AA9F;
+  --accent:      #C8701A;
+  --accent-dim:  #E8996A;
+  --border:      rgba(20,18,16,0.10);
+  --border-soft: rgba(20,18,16,0.06);
+  --font-sans:   'Geist', system-ui, sans-serif;
+  --font-mono:   'Geist Mono', 'Courier New', monospace;
+  --radius:      3px;
+  --max-w:       1120px;
+  --col:         calc((var(--max-w) - 11 * 16px) / 12);
+  --transition:  200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ─── RESET ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; }
+ul { list-style: none; }
+
+/* ─── SKIP LINK ──────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-family: var(--font-mono);
+  z-index: 9999;
+  border-radius: var(--radius);
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 16px; }
+
+/* ─── FOCUS VISIBLE ─────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(247,244,238,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+.nav-wordmark {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-family: var(--font-mono);
+}
+.nav-wordmark span { color: var(--accent); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-2);
+  letter-spacing: 0.01em;
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink) !important;
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  background: transparent;
+  transition: background var(--transition), border-color var(--transition) !important;
+}
+.nav-cta:hover {
+  background: var(--ink) !important;
+  color: var(--bg) !important;
+  border-color: var(--ink) !important;
+}
+
+/* ─── HERO ────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 56px;
+}
+
+/* Canvas sits behind everything */
+#field-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Static fallback when canvas not available or reduced-motion */
+.hero-static-texture {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 27px,
+    var(--border-soft) 27px,
+    var(--border-soft) 28px
+  );
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 80px 0 100px;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-label::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hero-wordmark {
+  font-size: clamp(40px, 6.5vw, 88px);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+  color: var(--ink);
+  margin-bottom: 28px;
+  max-width: 14ch;
+}
+.hero-wordmark em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.hero-tagline {
+  font-size: clamp(15px, 1.8vw, 19px);
+  font-weight: 300;
+  color: var(--ink-2);
+  max-width: 52ch;
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+.hero-sub {
+  font-size: 14px;
+  color: var(--ink-3);
+  max-width: 50ch;
+  line-height: 1.6;
+  margin-bottom: 48px;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  cursor: pointer;
+  border: none;
+  line-height: 1;
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--bg);
+}
+.btn-primary:hover {
+  background: var(--ink-2);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--ink);
+  background: rgba(20,18,16,0.04);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-3);
+  padding: 10px 4px;
+}
+.btn-ghost:hover { color: var(--ink); }
+.btn-ghost svg { opacity: 0.6; }
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+}
+.scroll-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+.scroll-line {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, var(--ink-4), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); transform-origin: top; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-line { animation: none; opacity: 0.4; }
+}
+
+/* ─── SECTION SHARED ─────────────────────────────────────── */
+section {
+  padding: 100px 0;
+}
+.section-header {
+  margin-bottom: 60px;
+}
+.section-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-meta::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 1px;
+  background: var(--border);
+}
+.section-title {
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.section-subtitle {
+  font-size: 15px;
+  color: var(--ink-3);
+  margin-top: 12px;
+  max-width: 56ch;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* ─── DIVIDER ─────────────────────────────────────────────── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── PROJECTS ────────────────────────────────────────────── */
+#projects { background: var(--bg); }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 2px);
+  overflow: hidden;
+}
+
+.project-card {
+  background: var(--bg);
+  padding: 36px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: background var(--transition);
+  position: relative;
+}
+.project-card:hover { background: var(--bg-raised); }
+
+.project-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.project-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  color: var(--ink-3);
+}
+.project-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.status-active {
+  color: #2D7A4F;
+  border-color: rgba(45,122,79,0.25);
+  background: rgba(45,122,79,0.06);
+}
+.status-beta {
+  color: #C8701A;
+  border-color: rgba(200,112,26,0.25);
+  background: rgba(200,112,26,0.06);
+}
+.status-research {
+  color: #5B6C8A;
+  border-color: rgba(91,108,138,0.25);
+  background: rgba(91,108,138,0.06);
+}
+
+.project-name {
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.project-category {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-top: 4px;
+}
+.project-desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  font-weight: 300;
+  flex: 1;
+}
+
+.project-metrics {
+  display: flex;
+  gap: 24px;
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.metric-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.project-links {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 20px;
+  margin-top: auto;
+}
+.project-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  padding: 4px 0;
+  margin-right: 20px;
+  border-bottom: 1px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+.project-link:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.project-link:last-child { margin-right: 0; }
+
+/* ─── EXPEDITIONS ─────────────────────────────────────────── */
+#expeditions {
+  background: var(--bg-raised);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.expeditions-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.expeditions-intro {
+  position: sticky;
+  top: 80px;
+}
+.expeditions-intro-desc {
+  font-size: 14px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  font-weight: 300;
+  margin-bottom: 24px;
+}
+.expeditions-intro-cta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: gap var(--transition);
+}
+.expeditions-intro-cta:hover { gap: 12px; }
+.expeditions-intro-cta::after { content: '→'; }
+
+.expeditions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.expedition-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+  text-decoration: none;
+  transition: background var(--transition);
+}
+.expedition-item:first-child { border-top: 1px solid var(--border); }
+
+.expedition-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  padding-top: 4px;
+  text-transform: uppercase;
+}
+
+.expedition-body { display: flex; flex-direction: column; gap: 10px; }
+
+.expedition-title {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  transition: color var(--transition);
+}
+.expedition-item:hover .expedition-title { color: var(--accent); }
+
+.expedition-question {
+  font-size: 14px;
+  color: var(--ink-3);
+  font-style: italic;
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+.expedition-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+.expedition-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+.expedition-tag + .expedition-tag::before {
+  content: '·';
+  margin-right: 16px;
+  color: var(--ink-4);
+}
+.expedition-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ─── FOOTER ──────────────────────────────────────────────── */
+.site-footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 60px 0 40px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 60px;
+}
+
+.footer-brand {}
+.footer-wordmark {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.footer-tagline {
+  font-size: 13px;
+  color: var(--ink-3);
+  max-width: 32ch;
+  line-height: 1.6;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+.footer-github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  transition: color var(--transition);
+}
+.footer-github-link:hover { color: var(--ink); }
+.footer-github-link svg { flex-shrink: 0; }
+
+.footer-nav-group {}
+.footer-nav-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-bottom: 16px;
+}
+.footer-nav-list { display: flex; flex-direction: column; gap: 10px; }
+.footer-nav-list a {
+  font-size: 14px;
+  color: var(--ink-3);
+  transition: color var(--transition);
+  font-weight: 300;
+}
+.footer-nav-list a:hover { color: var(--ink); }
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  letter-spacing: 0.04em;
+}
+.footer-legal {
+  display: flex;
+  gap: 24px;
+}
+.footer-legal a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  letter-spacing: 0.04em;
+  transition: color var(--transition);
+}
+.footer-legal a:hover { color: var(--ink-2); }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .projects-grid { grid-template-columns: 1fr; }
+  .expeditions-layout { grid-template-columns: 1fr; gap: 40px; }
+  .expeditions-intro { position: static; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .container { padding: 0 20px; }
+  .hero-wordmark { font-size: clamp(34px, 9vw, 56px); }
+  .footer-top { grid-template-columns: 1fr; }
+  section { padding: 72px 0; }
+}
+
+/* ─── REDUCED MOTION OVERRIDE ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  #field-canvas { display: none !important; }
+  .hero-static-texture { display: block !important; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ─── CANVAS CURSOR HINT ─────────────────────────────────── */
+.canvas-hint {
+  position: absolute;
+  bottom: 100px;
+  right: 32px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  opacity: 0;
+  animation: hint-fade 3s ease-in-out 1.5s forwards;
+  pointer-events: none;
+}
+@keyframes hint-fade {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .canvas-hint { display: none; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- NAV -->
+<nav class="site-nav" role="navigation" aria-label="Primary navigation">
+  <div class="container nav-inner">
+    <a href="#" class="nav-wordmark" aria-label="Unknown Foundation home">
+      UF<span>.</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#expeditions">Expeditions</a></li>
+      <li><a href="#" aria-label="Archive">Archive</a></li>
+      <li><a href="#" aria-label="Manifesto">Manifesto</a></li>
+      <li><a href="https://github.com/unknown-foundation" class="nav-cta" aria-label="GitHub">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" role="banner">
+  <canvas id="field-canvas" aria-hidden="true"></canvas>
+  <div class="hero-static-texture" aria-hidden="true"></div>
+  <div class="canvas-hint" aria-hidden="true">Move cursor to explore →</div>
+
+  <div class="container hero-content" id="main-content">
+    <p class="hero-label" aria-label="Collective identifier">Open Source Engineering Collective</p>
+    <h1 class="hero-wordmark">
+      Unknown<br><em>Foundation</em>
+    </h1>
+    <p class="hero-tagline">
+      Building experimental software systems in public. Exploring unmapped technical territory through research, engineering, and open source collaboration.
+    </p>
+    <p class="hero-sub">
+      We move slowly and publish everything — the process, the dead ends, and the discoveries.
+    </p>
+    <nav class="hero-actions" aria-label="Primary actions">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="#expeditions" class="btn btn-secondary">Explore Expeditions</a>
+      <a href="https://github.com/unknown-foundation" class="btn btn-ghost" aria-label="Contribute on GitHub">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" fill="currentColor"/>
+        </svg>
+        Contribute on GitHub
+      </a>
+    </nav>
+  </div>
+
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</header>
+
+<!-- PROJECTS -->
+<section id="projects" aria-labelledby="projects-heading">
+  <div class="container">
+    <header class="section-header">
+      <p class="section-meta" aria-label="Section identifier">Active Projects</p>
+      <h2 class="section-title" id="projects-heading">What we build</h2>
+      <p class="section-subtitle">Experimental systems released openly. Each project is a question we're working in public to answer.</p>
+    </header>
+
+    <div class="projects-grid" role="list">
+
+      <!-- UF-01 -->
+      <article class="project-card" role="listitem" aria-labelledby="proj-01-name">
+        <div class="project-card-top">
+          <span class="project-id">UF-01</span>
+          <span class="project-status status-active" role="status" aria-label="Status: Active Development">Active</span>
+        </div>
+        <div>
+          <h3 class="project-name" id="proj-01-name">Knowledge Engine</h3>
+          <p class="project-category">Knowledge Systems · AI Tooling</p>
+        </div>
+        <p class="project-desc">
+          Open source infrastructure for collaborative knowledge systems. Exploring how structured knowledge can be authored, linked, and queried at scale without central gatekeeping.
+        </p>
+        <div class="project-metrics" aria-label="Project metrics">
+          <div class="metric">
+            <span class="metric-value" aria-label="Contributors: not yet disclosed">—</span>
+            <span class="metric-label">Contributors</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" aria-label="Stars: not yet disclosed">—</span>
+            <span class="metric-label">Stars</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" aria-label="Releases: not yet disclosed">—</span>
+            <span class="metric-label">Releases</span>
+          </div>
+        </div>
+        <nav class="project-links" aria-label="UF-01 links">
+          <a href="#" class="project-link">Repository</a>
+          <a href="#" class="project-link">Docs</a>
+          <a href="#" class="project-link">Roadmap</a>
+        </nav>
+      </article>
+
+      <!-- UF-02 -->
+      <article class="project-card" role="listitem" aria-labelledby="proj-02-name">
+        <div class="project-card-top">
+          <span class="project-id">UF-02</span>
+          <span class="project-status status-beta" role="status" aria-label="Status: Beta">Beta</span>
+        </div>
+        <div>
+          <h3 class="project-name" id="proj-02-name">Signal</h3>
+          <p class="project-category">Developer Infrastructure · Automation</p>
+        </div>
+        <p class="project-desc">
+          A minimal event-routing layer for distributed workflows. Signal decouples producers and consumers across heterogeneous systems with zero infrastructure lock-in.
+        </p>
+        <div class="project-metrics" aria-label="Project metrics">
+          <div class="metric">
+            <span class="metric-value" aria-label="Contributors: not yet disclosed">—</span>
+            <span class="metric-label">Contributors</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" aria-label="Stars: not yet disclosed">—</span>
+            <span class="metric-label">Stars</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" aria-label="Releases: not yet disclosed">—</span>
+            <span class="metric-label">Releases</span>
+          </div>
+        </div>
+        <nav class="project-links" aria-label="UF-02 links">
+          <a href="#" class="project-link">Repository</a>
+          <a href="#" class="project-link">Docs</a>
+          <a href="#" class="project-link">Roadmap</a>
+        </nav>
+      </article>
+
+      <!-- UF-03 -->
+      <article class="project-card" role="listitem" aria-labelledby="proj-03-name">
+        <div class="project-card-top">
+          <span class="project-id">UF-03</span>
+          <span class="project-status status-research" role="status" aria-label="Status: Research">Research</span>
+        </div>
+        <div>
+          <h3 class="project-name" id="proj-03-name">Driftwood</h3>
+          <p class="project-category">Research Platform · Engineering Workflows</p>
+        </div>
+        <p class="project-desc">
+          A research tool for tracing the provenance of technical decisions. Driftwood captures the why behind architecture choices — for teams who want institutional memory that actually survives.
+        </p>
+        <div class="project-metrics" aria-label="Project metrics">
+          <div class="metric">
+            <span class="metric-value" aria-label="Contributors: not yet disclosed">—</span>
+            <span class="metric-label">Contributors</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" aria-label="Stars: not yet disclosed">—</span>
+            <span class="metric-label">Stars</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" aria-label="Releases: not yet disclosed">—</span>
+            <span class="metric-label">Releases</span>
+          </div>
+        </div>
+        <nav class="project-links" aria-label="UF-03 links">
+          <a href="#" class="project-link">Repository</a>
+          <a href="#" class="project-link">Docs</a>
+          <a href="#" class="project-link">Roadmap</a>
+        </nav>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- EXPEDITIONS -->
+<section id="expeditions" aria-labelledby="expeditions-heading">
+  <div class="container">
+    <div class="expeditions-layout">
+
+      <div class="expeditions-intro">
+        <header class="section-header" style="margin-bottom: 24px;">
+          <p class="section-meta">Field Notes</p>
+          <h2 class="section-title" id="expeditions-heading">Expeditions</h2>
+        </header>
+        <p class="expeditions-intro-desc">
+          A public engineering journal. Expeditions are structured explorations — each one begins with a question, runs an experiment, and publishes findings whether or not they succeed.
+        </p>
+        <p class="expeditions-intro-desc">
+          We write for engineers who want to follow the work, not just consume the outcome.
+        </p>
+        <a href="#" class="expeditions-intro-cta" aria-label="View all expeditions">View all expeditions</a>
+      </div>
+
+      <div>
+        <ol class="expeditions-list" aria-label="Recent expeditions">
+
+          <li>
+            <a href="#" class="expedition-item" aria-labelledby="exp-01-title">
+              <span class="expedition-num">EXP-01</span>
+              <div class="expedition-body">
+                <h3 class="expedition-title" id="exp-01-title">Distributed Intelligence</h3>
+                <p class="expedition-question">
+                  "How can distributed systems coordinate knowledge without central ownership?"
+                </p>
+                <div class="expedition-footer">
+                  <span class="expedition-status-dot" aria-hidden="true"></span>
+                  <span class="expedition-tag">Systems Architecture</span>
+                  <span class="expedition-tag">Active</span>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="expedition-item" aria-labelledby="exp-02-title">
+              <span class="expedition-num">EXP-02</span>
+              <div class="expedition-body">
+                <h3 class="expedition-title" id="exp-02-title">The Provenance Problem</h3>
+                <p class="expedition-question">
+                  "Why do engineering decisions lose their rationale within 18 months, and what would it take to prevent that?"
+                </p>
+                <div class="expedition-footer">
+                  <span class="expedition-status-dot" aria-hidden="true" style="background: var(--ink-3);"></span>
+                  <span class="expedition-tag">Engineering Workflows</span>
+                  <span class="expedition-tag">Published</span>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="expedition-item" aria-labelledby="exp-03-title">
+              <span class="expedition-num">EXP-03</span>
+              <div class="expedition-body">
+                <h3 class="expedition-title" id="exp-03-title">Signal Without Noise</h3>
+                <p class="expedition-question">
+                  "Can event-driven architectures remain comprehensible as they scale, or is complexity a fundamental property of the pattern?"
+                </p>
+                <div class="expedition-footer">
+                  <span class="expedition-status-dot" aria-hidden="true" style="background: var(--ink-4);"></span>
+                  <span class="expedition-tag">Distributed Systems</span>
+                  <span class="expedition-tag">Draft</span>
+                </div>
+              </div>
+            </a>
+          </li>
+
+        </ol>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        <p class="footer-wordmark">Unknown Foundation</p>
+        <p class="footer-tagline">
+          A small open source engineering collective. Building experimental software systems in public since 2024.
+        </p>
+        <a href="https://github.com/unknown-foundation" class="footer-github-link" aria-label="Unknown Foundation on GitHub">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" fill="currentColor"/>
+          </svg>
+          github.com/unknown-foundation
+        </a>
+      </div>
+
+      <nav class="footer-nav-group" aria-label="Work">
+        <p class="footer-nav-label">Work</p>
+        <ul class="footer-nav-list" role="list">
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#expeditions">Expeditions</a></li>
+          <li><a href="#">Archive</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-nav-group" aria-label="Foundation">
+        <p class="footer-nav-label">Foundation</p>
+        <ul class="footer-nav-list" role="list">
+          <li><a href="#">Manifesto</a></li>
+          <li><a href="#">Team</a></li>
+          <li><a href="#">Contribute</a></li>
+          <li><a href="#">Governance</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-nav-group" aria-label="Open Source">
+        <p class="footer-nav-label">Open Source</p>
+        <ul class="footer-nav-list" role="list">
+          <li><a href="#">GitHub</a></li>
+          <li><a href="#">License</a></li>
+          <li><a href="#">Issues</a></li>
+          <li><a href="#">Discussions</a></li>
+        </ul>
+      </nav>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2024 Unknown Foundation. MIT License.</p>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="#">Privacy</a>
+        <a href="#">License</a>
+        <a href="#">Code of Conduct</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ─── RESPECT REDUCED MOTION ───────────────────────────────
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) return;
+
+  // ─── CANVAS SETUP ─────────────────────────────────────────
+  const canvas = document.getElementById('field-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // ─── VOCABULARY: domain notation for "unmapped territory" ─
+  // These are the raw signs of engineering work — coordinates, 
+  // measurements, identifiers, protocol tokens, uncertainty markers.
+  const TOKENS = [
+    // Coordinates / measurements
+    '(x, y)', '∂f/∂x', 'Δt', 'σ²', 'μ=0', 'n→∞', 'O(log n)',
+    '≈ 0.618', 'ε < 0.01', 'P(A|B)', 'λ=1.4', 'τ=32ms',
+    // Protocol / system tokens
+    '200 OK', '404', 'EOF', 'NUL', 'ACK', 'SYN', 'RST', 'TTL=64',
+    'FIFO', 'LIFO', 'CAS', 'WAL', 'GC', 'OOM',
+    // Research notation
+    'H₀', 'H₁', 'α=0.05', 'p<0.05', 'CI [0.2, 0.8]', 'n=147',
+    // Coordinate-like
+    '37.4°N', '122.0°W', '±0.3', 'alt: 842m',
+    // Code-adjacent
+    'nil', 'null', 'void', 'panic', 'err != nil', 'Ok(T)',
+    '::new()', 'impl', 'trait', '.await', 'async fn',
+    // Technical identifiers
+    'UF-01', 'UF-02', 'UF-03', 'EXP-01', 'EXP-02',
+    'rev: a4f3c9d', 'v0.1.0', 'HEAD~3', 'main',
+    // Status / uncertainty
+    'UNKNOWN', '???', 'TBD', '—', '∅', '∞', '⊥', '⊤',
+    // Freq / signal
+    '3.2 kHz', '440 Hz', '-14 dBFS', 'bin[512]', 'FFT',
+    // Date-like
+    '2024-Q1', 'T+00:00Z', 'epoch: 0',
+  ];
+
+  // Cell grid parameters
+  const CELL_W = 110;
+  const CELL_H = 30;
+  const FONT_SIZE = 11;
+  const FONT = `${FONT_SIZE}px 'Geist Mono', 'Courier New', monospace`;
+
+  // Colors (matching CSS tokens)
+  const INK_HEX = '20, 18, 16';        // #141210
+  const GHOST_ALPHA = 0.07;            // resting opacity of each token
+  const BLOOM_ALPHA = 0.72;            // peak opacity inside bloom
+  const BLOOM_RADIUS = 200;            // px radius of the bloom circle
+  const LERP_SPEED = 0.10;             // fraction per frame — controls follow smoothness
+
+  // State
+  let W = 0, H = 0;
+  let cols = 0, rows = 0;
+  let cells = [];                      // {x, y, token, seed}[]
+  let mouseX = -9999, mouseY = -9999;
+  let bloomX = -9999, bloomY = -9999;
+  let rafId = null;
+  let hidden = false;
+
+  // ─── RESIZE ───────────────────────────────────────────────
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    W = rect.width;
+    H = rect.height;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.scale(dpr, dpr);
+    buildGrid();
+  }
+
+  // ─── BUILD CELL GRID ─────────────────────────────────────
+  function buildGrid() {
+    cols = Math.ceil(W / CELL_W) + 1;
+    rows = Math.ceil(H / CELL_H) + 1;
+    cells = [];
+    // Seeded pseudo-random for stable layout
+    let seed = 7919;
+    function rand() {
+      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+      return (seed >>> 0) / 0xffffffff;
+    }
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        // Slight jitter so it doesn't feel like a spreadsheet
+        const jx = (rand() - 0.5) * 18;
+        const jy = (rand() - 0.5) * 6;
+        const x = c * CELL_W + jx + 8;
+        const y = r * CELL_H + jy + FONT_SIZE;
+        const tokenIdx = Math.floor(rand() * TOKENS.length);
+        cells.push({ x, y, token: TOKENS[tokenIdx] });
+      }
+    }
+  }
+
+  // ─── LERP ─────────────────────────────────────────────────
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // ─── DRAW FRAME ──────────────────────────────────────────
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = FONT;
+    ctx.textBaseline = 'alphabetic';
+
+    // Smoothly follow mouse
+    bloomX = lerp(bloomX, mouseX, LERP_SPEED);
+    bloomY = lerp(bloomY, mouseY, LERP_SPEED);
+
+    const hasBloom = mouseX > -1000; // has mouse entered?
+
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i];
+      const dx = cell.x - bloomX;
+      const dy = cell.y - bloomY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      let alpha = GHOST_ALPHA;
+      if (hasBloom && dist < BLOOM_RADIUS) {
+        // Smooth falloff: cosine ease from bloom center to edge
+        const t = dist / BLOOM_RADIUS;
+        const ease = 0.5 * (1 + Math.cos(Math.PI * t)); // 1 at center, 0 at edge
+        alpha = GHOST_ALPHA + (BLOOM_ALPHA - GHOST_ALPHA) * ease;
+      }
+
+      ctx.fillStyle = `rgba(${INK_HEX}, ${alpha})`;
+      ctx.fillText(cell.token, cell.x, cell.y);
+    }
+  }
+
+  // ─── RAF LOOP ─────────────────────────────────────────────
+  function loop() {
+    if (!hidden) {
+      draw();
+    }
+    rafId = requestAnimationFrame(loop);
+  }
+
+  // ─── VISIBILITY ───────────────────────────────────────────
+  document.addEventListener('visibilitychange', function () {
+    hidden = document.hidden;
+  });
+
+  // ─── MOUSE ────────────────────────────────────────────────
+  // Translate page coords to canvas-relative coords
+  function updateMouse(e) {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  }
+  window.addEventListener('mousemove', updateMouse, { passive: true });
+
+  // Touch: treat touch as mouse for mobile
+  window.addEventListener('touchmove', function (e) {
+    if (e.touches.length > 0) {
+      const t = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      mouseX = t.clientX - rect.left;
+      mouseY = t.clientY - rect.top;
+    }
+  }, { passive: true });
+
+  // ─── INIT ─────────────────────────────────────────────────
+  let resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // reset scale before resize
+      resize();
+    }, 120);
+  });
+
+  // Wait for fonts to load before first render (avoids FOUT on canvas)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      resize();
+      loop();
+    });
+  } else {
+    resize();
+    loop();
+  }
+
+})();
+</script>
+</body>
+</html>

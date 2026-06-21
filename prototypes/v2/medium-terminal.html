@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unknown Foundation — Engineering in Public</title>
+<meta name="description" content="A small open-source engineering collective building experimental software systems in public. Exploring unknown technical territory through research, engineering, and collaboration." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* === TOKENS — self-contained, no external CSS === */
+:root {
+  --bg:        #111210;
+  --bg-term:   #0C0B0A;
+  --text:      #E8E4DC;
+  --dim:       #857F78;
+  --faint:     #504B46;
+  --accent:    #E8A838;
+  --glow-rgb:  232, 168, 56;
+  --green:     #6DB38A;
+  --line:      rgba(232,228,220,0.09);
+  --line-s:    rgba(232,228,220,0.16);
+  --fm: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --fd: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: dark;
+}
+
+/* === RESET === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fd);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* === SKIP LINK === */
+.skip-link {
+  position: fixed; top: -72px; left: 16px; z-index: 300;
+  padding: 10px 18px;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--accent); border-radius: 3px;
+  font-family: var(--fm); font-size: 13px;
+  text-decoration: none;
+  transition: top 0.2s var(--ease);
+}
+.skip-link:focus { top: 14px; }
+
+/* === FOCUS === */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* === SR-ONLY === */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* === FILM GRAIN === */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 400;
+  pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ========================================
+   NAV
+======================================== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 40px;
+  background: linear-gradient(180deg, rgba(17,18,16,0.72) 0%, transparent 100%);
+  backdrop-filter: blur(0px);
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--fm); font-size: 12px; letter-spacing: 0.06em;
+  color: var(--text); font-weight: 500; text-decoration: none;
+}
+.brand-mark {
+  width: 20px; height: 20px; flex: none;
+}
+.nav-links {
+  display: flex; gap: 24px; list-style: none;
+  font-family: var(--fm); font-size: 12px; letter-spacing: 0.04em;
+}
+.nav-links a {
+  color: var(--dim); text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a:hover,
+.nav-links a:focus-visible { color: var(--text); }
+.nav-github {
+  font-family: var(--fm); font-size: 12px; letter-spacing: 0.04em;
+  color: var(--dim); text-decoration: none;
+  border: 1px solid var(--line-s); border-radius: 2px;
+  padding: 7px 14px;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.nav-github:hover,
+.nav-github:focus-visible { color: var(--text); border-color: var(--dim); }
+
+@media (max-width: 860px) {
+  .nav { padding: 18px 24px; }
+  .nav-links { display: none; }
+}
+
+/* ========================================
+   HERO
+======================================== */
+.hero {
+  min-height: 100vh;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  padding-top: 96px;
+  padding-bottom: 80px;
+}
+.hero-left { max-width: 560px; }
+
+.eyebrow {
+  font-family: var(--fm); font-size: 11.5px;
+  letter-spacing: 0.18em; color: var(--dim);
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow .slash { color: var(--faint); }
+
+.wordmark {
+  font-size: clamp(42px, 7vw, 94px);
+  font-weight: 500;
+  line-height: 0.93;
+  letter-spacing: -0.03em;
+}
+.wordmark .w1 { color: var(--dim); font-weight: 400; }
+.wordmark .w2 { color: var(--text); display: block; margin-top: 0.04em; }
+
+.tagline {
+  margin-top: 28px;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.6;
+  color: var(--dim);
+  font-weight: 300;
+  max-width: 460px;
+}
+.tagline strong { color: var(--text); font-weight: 400; }
+
+.hero-actions {
+  margin-top: 36px;
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--fm); font-size: 12.5px;
+  padding: 12px 20px; border-radius: 2px;
+  border: 1px solid var(--line-s); color: var(--text);
+  text-decoration: none; letter-spacing: 0.02em;
+  transition: border-color 0.35s var(--ease), color 0.35s var(--ease), background 0.35s var(--ease);
+}
+.btn:hover, .btn:focus-visible { border-color: var(--dim); }
+.btn-primary {
+  border-color: rgba(var(--glow-rgb), 0.5);
+  color: var(--accent);
+}
+.btn-primary:hover, .btn-primary:focus-visible {
+  background: rgba(var(--glow-rgb), 0.08);
+  border-color: var(--accent);
+}
+
+/* ========================================
+   TERMINAL PANEL
+======================================== */
+.terminal {
+  background: var(--bg-term);
+  border: 1px solid var(--line-s);
+  border-radius: 3px;
+  font-family: var(--fm);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow: hidden;
+  /* subtle inset shadow to read as "screen" */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 24px 64px rgba(0,0,0,0.4);
+  align-self: center;
+}
+
+.term-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(0,0,0,0.18);
+}
+.term-bar-left {
+  display: flex; align-items: center; gap: 8px;
+}
+.term-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); opacity: 0.7;
+}
+.term-dot.is-live { animation: pulse-dot 2.4s ease-in-out infinite; }
+.term-title {
+  color: var(--dim); letter-spacing: 0.06em; font-size: 11px;
+}
+.term-title .name { color: var(--text); }
+.term-uptime {
+  color: var(--faint); font-size: 11px; letter-spacing: 0.04em;
+}
+.term-cursor {
+  display: inline-block;
+  width: 7px; height: 13px; vertical-align: -2px;
+  background: var(--accent); opacity: 0.85;
+  animation: blink-cursor 1.1s step-end infinite;
+  margin-left: 4px;
+}
+
+.term-body {
+  padding: 14px 16px 16px;
+  min-height: 320px;
+  max-height: 400px;
+  display: flex; flex-direction: column-reverse;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* Lines are prepended (newest at top visually = bottom of DOM, column-reverse) */
+.term-line {
+  padding: 2px 0;
+  display: flex; gap: 8px; align-items: baseline;
+  white-space: nowrap; overflow: hidden;
+  color: var(--dim);
+  transition: color 0.8s var(--ease);
+}
+.term-line.is-new {
+  color: var(--text);
+  animation: line-enter 0.28s var(--ease) both;
+}
+.term-line.is-accent {
+  color: var(--accent);
+}
+
+.term-ts {
+  color: var(--faint); flex: none; min-width: 76px;
+}
+.term-level {
+  flex: none; min-width: 44px;
+  font-size: 10.5px; letter-spacing: 0.08em;
+}
+.term-level.lvl-build { color: var(--accent); opacity: 0.9; }
+.term-level.lvl-test  { color: var(--dim); }
+.term-level.lvl-rsrch { color: var(--accent); opacity: 0.6; }
+.term-level.lvl-git   { color: var(--dim); opacity: 0.75; }
+.term-level.lvl-dep   { color: var(--accent); opacity: 0.8; }
+.term-level.lvl-exp   { color: var(--green); opacity: 0.8; }
+.term-level.lvl-sys   { color: var(--faint); }
+.term-msg {
+  color: inherit; overflow: hidden; text-overflow: ellipsis;
+}
+.term-msg .hash {
+  color: var(--faint); font-size: 10.5px;
+}
+.term-msg .ok   { color: var(--green); }
+.term-msg .warn { color: var(--accent); }
+
+/* separator for .is-new lines -- amber pipe on left */
+.term-line.is-new::before {
+  content: '';
+  position: absolute; left: 16px;
+  width: 2px; height: 1.4em;
+  background: var(--accent);
+  opacity: 0;
+  border-radius: 1px;
+}
+
+.term-footer {
+  padding: 9px 16px;
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,0.12);
+}
+.term-prompt {
+  color: var(--accent); font-size: 11px; flex: none;
+}
+.term-input-line {
+  color: var(--dim); font-size: 11.5px; flex: 1;
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+@keyframes line-enter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink-cursor {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 0; }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.2); }
+}
+
+/* Page enter animations */
+.fade-in {
+  opacity: 0;
+  animation: fade-up 1.1s var(--ease) forwards;
+}
+.fade-in.d1 { animation-delay: 120ms; }
+.fade-in.d2 { animation-delay: 280ms; }
+.fade-in.d3 { animation-delay: 460ms; }
+.fade-in.d4 { animation-delay: 640ms; }
+.fade-in.d5 { animation-delay: 800ms; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ========================================
+   SECTIONS
+======================================== */
+.section {
+  max-width: 1200px; margin: 0 auto; padding: 120px 40px;
+}
+.section-head {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 24px; margin-bottom: 52px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--line-s); padding-bottom: 28px;
+}
+.section-head .eyebrow { margin: 0 0 10px; }
+.section-title {
+  font-size: clamp(26px, 3.5vw, 40px); font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.section-more {
+  font-family: var(--fm); font-size: 12.5px; color: var(--dim);
+  text-decoration: none; letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--line-s); padding-bottom: 3px;
+  transition: color 0.3s, border-color 0.3s;
+  white-space: nowrap;
+}
+.section-more:hover, .section-more:focus-visible {
+  color: var(--accent); border-color: rgba(var(--glow-rgb), 0.5);
+}
+
+/* DIVIDER between sections */
+.section-divider {
+  max-width: 1200px; margin: 0 auto; padding: 0 40px;
+}
+.section-divider hr {
+  border: none; border-top: 1px solid var(--line);
+}
+
+/* ========================================
+   PROJECT CARDS
+======================================== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line-s);
+  border: 1px solid var(--line-s);
+}
+.project-card {
+  background: var(--bg);
+  padding: 28px 28px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: background 0.4s var(--ease);
+}
+.project-card:hover { background: rgba(232,228,220,0.022); }
+
+.card-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.card-code {
+  font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.card-cat {
+  font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.06em;
+  color: var(--faint); text-transform: uppercase;
+}
+.card-title {
+  font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+}
+.card-desc {
+  font-size: 14px; line-height: 1.6; color: var(--dim);
+  font-weight: 300; flex: 1;
+}
+.card-status {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--fm); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--dim);
+}
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--dim); flex: none;
+}
+.card-status.is-active .status-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--glow-rgb), 0.14);
+}
+.card-status.is-early .status-dot {
+  background: var(--faint);
+}
+.card-meta {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  padding-top: 14px; border-top: 1px solid var(--line);
+  font-family: var(--fm); font-size: 11px; color: var(--dim);
+  letter-spacing: 0.02em;
+}
+.card-meta strong { color: var(--text); font-weight: 400; }
+.card-links {
+  display: flex; gap: 16px;
+}
+.card-links a {
+  font-family: var(--fm); font-size: 11.5px; color: var(--dim);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.25s, border-color 0.25s;
+  letter-spacing: 0.02em;
+}
+.card-links a:hover, .card-links a:focus-visible {
+  color: var(--text); border-color: var(--line-s);
+}
+
+@media (max-width: 900px) {
+  .projects-grid { grid-template-columns: 1fr; }
+}
+
+/* ========================================
+   EXPEDITIONS
+======================================== */
+.exp-list {
+  border-top: 1px solid var(--line-s);
+}
+.exp-item {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 28px;
+  align-items: start;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none; color: var(--text);
+  transition: padding-left 0.35s var(--ease);
+}
+.exp-item:hover, .exp-item:focus-visible { padding-left: 12px; }
+.exp-num {
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.08em;
+  color: var(--accent); padding-top: 3px;
+}
+.exp-content {}
+.exp-title {
+  font-size: 17px; font-weight: 400; letter-spacing: -0.01em;
+  line-height: 1.3; margin-bottom: 6px;
+}
+.exp-sub {
+  font-size: 13.5px; color: var(--dim); font-weight: 300;
+  line-height: 1.5;
+}
+.exp-status {
+  font-family: var(--fm); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--dim); padding-top: 3px; white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .exp-item { grid-template-columns: 72px 1fr; }
+  .exp-status { display: none; }
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 52px 40px 64px;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+.footer-brand-col {}
+.footer-brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--fm); font-size: 12px; letter-spacing: 0.06em;
+  color: var(--text); font-weight: 500; text-decoration: none;
+  margin-bottom: 16px; display: flex;
+}
+.footer-desc {
+  font-size: 13px; line-height: 1.6; color: var(--dim);
+  font-weight: 300; max-width: 240px; margin-bottom: 20px;
+}
+.footer-legal {
+  font-family: var(--fm); font-size: 11px; color: var(--faint);
+  letter-spacing: 0.03em; line-height: 1.7;
+}
+.footer-col-title {
+  font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.14em;
+  color: var(--faint); text-transform: uppercase; margin-bottom: 16px;
+}
+.footer-links {
+  display: flex; flex-direction: column; gap: 10px;
+  list-style: none;
+}
+.footer-links a {
+  font-family: var(--fm); font-size: 12.5px; color: var(--dim);
+  text-decoration: none; letter-spacing: 0.02em;
+  transition: color 0.25s;
+}
+.footer-links a:hover, .footer-links a:focus-visible { color: var(--text); }
+
+@media (max-width: 860px) {
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .footer-brand-col { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .footer-inner { grid-template-columns: 1fr; }
+  .footer-brand-col { grid-column: 1; }
+}
+
+/* ========================================
+   HERO RESPONSIVE
+======================================== */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 112px 24px 60px;
+    gap: 40px;
+  }
+  .hero-left { max-width: 100%; }
+  .terminal { font-size: 11px; }
+  .term-body { min-height: 220px; max-height: 240px; }
+}
+@media (max-width: 540px) {
+  .section { padding: 80px 24px; }
+  .section-divider { padding: 0 24px; }
+  .site-footer { padding: 44px 24px 56px; }
+  .hero { padding: 100px 24px 48px; }
+  .wordmark { letter-spacing: -0.025em; }
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .fade-in { opacity: 1; transform: none; }
+  .term-cursor { animation: none; opacity: 0.7; }
+  .term-dot.is-live { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- NAV -->
+<header role="banner">
+  <nav class="nav" aria-label="Primary navigation">
+    <a class="brand" href="#" aria-label="Unknown Foundation — home">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <path d="M12 3.5 A8.5 8.5 0 0 1 12 20.5" stroke="#E8A838" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M12 3.5 A8.5 8.5 0 0 0 12 20.5" stroke="#504B46" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="2.5 4"/>
+        <circle cx="12" cy="12" r="2" fill="#E8A838"/>
+      </svg>
+      UNKNOWN FOUNDATION
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#expeditions">Expeditions</a></li>
+      <li><a href="#">Archive</a></li>
+      <li><a href="#">Manifesto</a></li>
+      <li><a href="#">Team</a></li>
+      <li><a href="#">Contribute</a></li>
+    </ul>
+    <a class="nav-github" href="https://github.com/unknown-foundation" aria-label="Unknown Foundation on GitHub">GitHub ↗</a>
+  </nav>
+</header>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-wordmark">
+    <!-- LEFT: identity + CTAs -->
+    <div class="hero-left">
+      <p class="eyebrow fade-in d1">
+        <span class="slash" aria-hidden="true">//</span>
+        OPEN-SOURCE ENGINEERING COLLECTIVE
+      </p>
+      <h1 class="wordmark fade-in d2" id="hero-wordmark">
+        <span class="w1">Unknown</span>
+        <span class="w2">Foundation</span>
+      </h1>
+      <p class="tagline fade-in d3">
+        Building <strong>experimental software systems in public</strong> — at the edge of technical territory not yet mapped, understood, or productized.
+      </p>
+      <div class="hero-actions fade-in d4" role="list">
+        <a class="btn btn-primary" href="#projects" role="listitem">View Projects →</a>
+        <a class="btn" href="#expeditions" role="listitem">Explore Expeditions</a>
+        <a class="btn" href="https://github.com/unknown-foundation" role="listitem">Contribute on GitHub</a>
+      </div>
+    </div>
+
+    <!-- RIGHT: living terminal log -->
+    <div class="terminal fade-in d5" role="region" aria-label="Live build log" aria-live="polite" aria-atomic="false">
+      <div class="term-bar">
+        <div class="term-bar-left">
+          <span class="term-dot is-live" aria-hidden="true"></span>
+          <span class="term-title"><span class="name">uf-system</span> · live</span>
+        </div>
+        <span class="term-uptime" id="term-uptime" aria-label="Session uptime">00:00:00</span>
+      </div>
+      <div class="term-body" id="term-body" aria-label="Build log entries">
+        <!-- Lines prepended by JS; static fallback for no-JS / reduced-motion below -->
+        <noscript>
+          <div class="term-line"><span class="term-ts">[09:14:02]</span><span class="term-level lvl-build">build</span><span class="term-msg">uf-01/knowledge-engine: release candidate — <span class="hash">a3f8d2c</span></span></div>
+          <div class="term-line"><span class="term-ts">[09:11:44]</span><span class="term-level lvl-test">test</span><span class="term-msg">uf-01: 412 tests passed · 0 failed <span class="ok">✓</span></span></div>
+          <div class="term-line"><span class="term-ts">[09:08:31]</span><span class="term-level lvl-rsrch">rsrch</span><span class="term-msg">EXP-03: corpus isolation layer — first prototype shipped</span></div>
+          <div class="term-line"><span class="term-ts">[09:05:17]</span><span class="term-level lvl-git">git</span><span class="term-msg">push origin main — <span class="hash">7c21b9e</span> — refactor: embedding pipeline</span></div>
+          <div class="term-line"><span class="term-ts">[09:02:03]</span><span class="term-level lvl-exp">exp</span><span class="term-msg">EXP-01: field note #14 published — distributed coordination</span></div>
+          <div class="term-line"><span class="term-ts">[08:58:50]</span><span class="term-level lvl-dep">dep</span><span class="term-msg">uf-02/signal: v0.4.1 deployed to staging <span class="ok">✓</span></span></div>
+          <div class="term-line"><span class="term-ts">[08:55:38]</span><span class="term-level lvl-sys">sys</span><span class="term-msg">system: session start · unknown-foundation · 2026-06-20</span></div>
+        </noscript>
+      </div>
+      <div class="term-footer" aria-hidden="true">
+        <span class="term-prompt">$</span>
+        <span class="term-input-line">watching uf-01 uf-02 uf-03 EXP-01..03</span>
+        <span class="term-cursor" aria-hidden="true"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <div class="section-divider"><hr /></div>
+  <section class="section" id="projects" aria-labelledby="projects-heading">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="slash" aria-hidden="true">//</span> WHAT WE BUILD</p>
+        <h2 class="section-title" id="projects-heading">Projects</h2>
+      </div>
+      <a class="section-more" href="#">All projects ↗</a>
+    </div>
+    <!-- metrics are honest placeholders — real values from build-time GitHub pipeline -->
+    <div class="projects-grid">
+      <article class="project-card">
+        <div class="card-top">
+          <span class="card-code">UF-01</span>
+          <span class="card-cat">Knowledge Systems</span>
+        </div>
+        <h3 class="card-title">Knowledge Engine</h3>
+        <p class="card-desc">Open-source infrastructure for collaborative knowledge systems — durable, queryable, owned by no single node. Built for the long term.</p>
+        <span class="card-status is-active">
+          <span class="status-dot" aria-hidden="true"></span>
+          Active Development
+        </span>
+        <div class="card-meta">
+          <span>★ <strong>—</strong></span>
+          <span><strong>Rust</strong></span>
+          <span><strong>Apache-2.0</strong></span>
+          <span>Updated <strong>—</strong></span>
+        </div>
+        <div class="card-links">
+          <a href="#">Repository ↗</a>
+          <a href="#">Docs</a>
+          <a href="#">Roadmap</a>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="card-top">
+          <span class="card-code">UF-02</span>
+          <span class="card-cat">AI Tooling</span>
+        </div>
+        <h3 class="card-title">Signal</h3>
+        <p class="card-desc">A local-first toolkit for reasoning over private corpora without surrendering them to a third party. Your data stays yours.</p>
+        <span class="card-status is-active">
+          <span class="status-dot" aria-hidden="true"></span>
+          Active Development
+        </span>
+        <div class="card-meta">
+          <span>★ <strong>—</strong></span>
+          <span><strong>TypeScript</strong></span>
+          <span><strong>MIT</strong></span>
+          <span>Updated <strong>—</strong></span>
+        </div>
+        <div class="card-links">
+          <a href="#">Repository ↗</a>
+          <a href="#">Docs</a>
+          <a href="#">Roadmap</a>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="card-top">
+          <span class="card-code">UF-03</span>
+          <span class="card-cat">Developer Infrastructure</span>
+        </div>
+        <h3 class="card-title">Driftwood</h3>
+        <p class="card-desc">Deterministic build &amp; replay for distributed systems — make the non-reproducible reproducible. Every run, every time.</p>
+        <span class="card-status is-early">
+          <span class="status-dot" aria-hidden="true"></span>
+          Early Research
+        </span>
+        <div class="card-meta">
+          <span>★ <strong>—</strong></span>
+          <span><strong>Go</strong></span>
+          <span><strong>Apache-2.0</strong></span>
+          <span>Updated <strong>—</strong></span>
+        </div>
+        <div class="card-links">
+          <a href="#">Repository ↗</a>
+          <a href="#">Docs</a>
+          <a href="#">Roadmap</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- EXPEDITIONS -->
+  <div class="section-divider"><hr /></div>
+  <section class="section" id="expeditions" aria-labelledby="exp-heading">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="slash" aria-hidden="true">//</span> FIELD NOTES FROM THE UNMAPPED</p>
+        <h2 class="section-title" id="exp-heading">Expeditions</h2>
+      </div>
+      <a class="section-more" href="#">All expeditions ↗</a>
+    </div>
+    <nav class="exp-list" aria-label="Recent expeditions">
+      <a class="exp-item" href="#">
+        <span class="exp-num">EXP-01</span>
+        <span class="exp-content">
+          <span class="exp-title">Distributed intelligence without central ownership</span>
+          <span class="exp-sub">How can independent nodes coordinate knowledge with no authority in the middle? Architecture, failure modes, and what CRDTs actually cost in practice.</span>
+        </span>
+        <span class="exp-status">In progress</span>
+      </a>
+      <a class="exp-item" href="#">
+        <span class="exp-num">EXP-02</span>
+        <span class="exp-content">
+          <span class="exp-title">Making the non-reproducible reproducible</span>
+          <span class="exp-sub">Deterministic capture &amp; replay for systems that refuse to behave twice. Notes on time, state, and why "works on my machine" is an architecture problem.</span>
+        </span>
+        <span class="exp-status">Results</span>
+      </a>
+      <a class="exp-item" href="#">
+        <span class="exp-num">EXP-03</span>
+        <span class="exp-content">
+          <span class="exp-title">Reasoning over a corpus you never hand over</span>
+          <span class="exp-sub">Local-first retrieval where the data never leaves the building. Embedding pipelines, isolation boundaries, and what "private" actually means at the infrastructure level.</span>
+        </span>
+        <span class="exp-status">Prototype</span>
+      </a>
+    </nav>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <a class="footer-brand" href="#" aria-label="Unknown Foundation — home">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+          <path d="M12 3.5 A8.5 8.5 0 0 1 12 20.5" stroke="#E8A838" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M12 3.5 A8.5 8.5 0 0 0 12 20.5" stroke="#504B46" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="2.5 4"/>
+          <circle cx="12" cy="12" r="2" fill="#E8A838"/>
+        </svg>
+        UNKNOWN FOUNDATION
+      </a>
+      <p class="footer-desc">A small open-source engineering collective building experimental software systems in public.</p>
+      <p class="footer-legal">
+        Apache-2.0 · MIT<br>
+        EST. 2026 · Open Source
+      </p>
+    </div>
+    <div>
+      <p class="footer-col-title">Navigation</p>
+      <ul class="footer-links" role="list">
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#expeditions">Expeditions</a></li>
+        <li><a href="#">Archive</a></li>
+        <li><a href="#">Manifesto</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Community</p>
+      <ul class="footer-links" role="list">
+        <li><a href="#">Team</a></li>
+        <li><a href="#">Contribute</a></li>
+        <li><a href="#">GitHub ↗</a></li>
+        <li><a href="#">Discussions ↗</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Resources</p>
+      <ul class="footer-links" role="list">
+        <li><a href="#">Documentation</a></li>
+        <li><a href="#">Roadmap</a></li>
+        <li><a href="#">Releases</a></li>
+        <li><a href="#">License</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+'use strict';
+
+/* =========================================================
+   TERMINAL ENGINE
+   - Prepends new lines to #term-body at random 10–18s intervals
+   - Pauses when tab is hidden (document.hidden)
+   - Respects prefers-reduced-motion: shows static snapshot, no streaming
+   - WCAG: aria-live="polite" on term-body, each new line announced
+========================================================= */
+
+var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var body   = document.getElementById('term-body');
+var uptime = document.getElementById('term-uptime');
+if (!body) return;
+
+/* --- uptime counter --- */
+var startTime = Date.now();
+function tickUptime() {
+  var elapsed = Math.floor((Date.now() - startTime) / 1000);
+  var h = Math.floor(elapsed / 3600);
+  var m = Math.floor((elapsed % 3600) / 60);
+  var s = elapsed % 60;
+  if (uptime) {
+    uptime.textContent =
+      pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+}
+function pad(n) { return n < 10 ? '0' + n : String(n); }
+setInterval(tickUptime, 1000);
+tickUptime();
+
+/* --- log corpus ---
+   Format: [level, message]
+   Levels: build | test | rsrch | git | dep | exp | sys
+   Timestamps are computed at display time (wall clock - offset)
+   so they always look like a fresh continuous log.
+*/
+var CORPUS = [
+  ['sys',   'session start · unknown-foundation · uf-01 uf-02 uf-03'],
+  ['build', 'uf-01/knowledge-engine: warming build cache'],
+  ['sys',   'EXP-01 EXP-02 EXP-03 watchers attached'],
+  ['git',   'fetch origin — <span class="hash">7c21b9e</span> — ahead 0 · behind 0'],
+  ['build', 'uf-01: Rust compiler v1.78 · release mode'],
+  ['test',  'uf-01: running test suite — 412 tests'],
+  ['test',  'uf-01: 412 tests passed · 0 failed <span class="ok">✓</span>'],
+  ['build', 'uf-01/knowledge-engine: build succeeded — <span class="hash">a3f8d2c</span>'],
+  ['dep',   'uf-01: binary size 4.1 MB · stripped'],
+  ['rsrch', 'EXP-01: reviewing node coordination approaches'],
+  ['git',   'commit — <span class="hash">3d9f71a</span> — docs: add architecture decision log'],
+  ['exp',   'EXP-01: field note #12 — CRDT overhead at scale'],
+  ['build', 'uf-02/signal: TypeScript compile — strict mode'],
+  ['test',  'uf-02: running embedding pipeline tests'],
+  ['test',  'uf-02: 88 tests passed · 0 failed <span class="ok">✓</span>'],
+  ['dep',   'uf-02/signal: v0.4.1 → staging <span class="ok">✓</span>'],
+  ['rsrch', 'EXP-03: corpus isolation — first prototype complete'],
+  ['exp',   'EXP-03: field note #7 — privacy boundary at rest'],
+  ['git',   'push origin main — <span class="hash">b14e2fc</span> — refactor: embedding pipeline'],
+  ['build', 'uf-03/driftwood: Go 1.22 · build tags: linux/amd64'],
+  ['rsrch', 'EXP-02: replay fidelity — 97.4% match across 1k runs'],
+  ['test',  'uf-03: integration tests — determinism check'],
+  ['test',  'uf-03: 61 tests passed · <span class="warn">2 skipped</span> (pending hardware)'],
+  ['exp',   'EXP-02: field note #9 — clock drift under load'],
+  ['git',   'commit — <span class="hash">91da3c7</span> — fix: replay timestamp normalisation'],
+  ['dep',   'uf-02/signal: v0.4.1 → production · health check <span class="ok">✓</span>'],
+  ['rsrch', 'EXP-01: node coordination — prototype v2 branched'],
+  ['build', 'uf-01: incremental rebuild — <span class="hash">f5a8e01</span>'],
+  ['exp',   'EXP-01: field note #13 — quorum without authority'],
+  ['sys',   'all systems nominal · next build: scheduled'],
+  ['git',   'tag v0.4.1 · signed · pushed'],
+  ['rsrch', 'EXP-03: latency baseline recorded — p50 8ms · p99 42ms'],
+  ['build', 'uf-01/knowledge-engine: release candidate — <span class="hash">a3f8d2c</span>'],
+  ['exp',   'EXP-02: results published — see Expeditions ↗'],
+  ['dep',   'uf-01: staging deploy — smoke tests <span class="ok">✓</span>'],
+  ['sys',   'daily digest: 3 commits · 2 field notes · 1 release'],
+  ['rsrch', 'EXP-01: field note #14 — distributed coordination'],
+  ['git',   'commit — <span class="hash">2ef9b3d</span> — test: add p99 latency assertions'],
+  ['build', 'uf-02/signal: bundle — 148 kB gzipped'],
+  ['test',  'uf-02: end-to-end — local corpus isolation verified <span class="ok">✓</span>'],
+];
+
+var MAX_LINES  = 12; /* visible lines at desktop */
+var corpusIdx  = 0;
+var lineCount  = 0;
+var timerID    = null;
+var paused     = false;
+
+/* Compute a timestamp string offset from now */
+function makeTimestamp(offsetSec) {
+  var d = new Date(Date.now() - offsetSec * 1000);
+  return '[' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ']';
+}
+
+/* Initial snapshot — fill visible lines with history entries */
+function fillInitial() {
+  /* Show last N entries from corpus, oldest first (they'll prepend in reverse) */
+  var count = Math.min(MAX_LINES, CORPUS.length);
+  var start = 0;
+  /* Pre-stamp them with plausible past timestamps */
+  var entries = [];
+  for (var i = 0; i < count; i++) {
+    var offset = (count - i) * 75 + Math.floor(Math.random() * 40);
+    entries.push({ entry: CORPUS[(start + i) % CORPUS.length], offset: offset });
+  }
+  corpusIdx = count % CORPUS.length;
+
+  /* Append to body (column-reverse means last-appended is visually on top) */
+  /* We append oldest first so the newest ends up at the visual top */
+  entries.forEach(function (item) {
+    appendLine(item.entry[0], item.entry[1], makeTimestamp(item.offset), false);
+  });
+}
+
+function appendLine(level, msg, ts, animate) {
+  var line = document.createElement('div');
+  line.className = 'term-line' + (animate ? ' is-new' : '');
+  line.setAttribute('role', 'log');
+
+  var tsEl = document.createElement('span');
+  tsEl.className = 'term-ts';
+  tsEl.setAttribute('aria-hidden', 'true');
+  tsEl.textContent = ts;
+
+  var lvEl = document.createElement('span');
+  lvEl.className = 'term-level lvl-' + level;
+  lvEl.setAttribute('aria-label', level);
+  lvEl.textContent = level;
+
+  var msgEl = document.createElement('span');
+  msgEl.className = 'term-msg';
+  msgEl.innerHTML = msg; /* HTML allowed — corpus is internal, not user input */
+
+  line.appendChild(tsEl);
+  line.appendChild(lvEl);
+  line.appendChild(msgEl);
+
+  /* Prepend (column-reverse layout means first child = visual bottom, last child = visual top) */
+  /* To make newest appear at the TOP visually in column-reverse, we append to the end of DOM */
+  body.appendChild(line);
+
+  /* Cull lines beyond MAX_LINES (remove from DOM start = visual bottom = oldest) */
+  while (body.children.length > MAX_LINES) {
+    body.removeChild(body.firstChild);
+  }
+
+  /* Remove is-new class after flash duration (let CSS transition settle) */
+  if (animate) {
+    setTimeout(function () {
+      line.classList.remove('is-new');
+    }, 2400);
+  }
+
+  lineCount++;
+}
+
+function scheduleNext() {
+  if (paused) return;
+  /* 10–18s jitter */
+  var delay = 10000 + Math.random() * 8000;
+  timerID = setTimeout(function () {
+    if (paused || document.hidden) { scheduleNext(); return; }
+    var entry = CORPUS[corpusIdx % CORPUS.length];
+    corpusIdx++;
+    appendLine(entry[0], entry[1], makeTimestamp(0), true);
+    scheduleNext();
+  }, delay);
+}
+
+/* Visibility API: pause when hidden */
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) {
+    paused = true;
+    clearTimeout(timerID);
+  } else {
+    paused = false;
+    scheduleNext();
+  }
+});
+
+/* Boot */
+if (REDUCE) {
+  /* Static snapshot — no streaming, no animation */
+  fillInitial();
+} else {
+  fillInitial();
+  scheduleNext();
+}
+
+})();
+</script>
+</body>
+</html>

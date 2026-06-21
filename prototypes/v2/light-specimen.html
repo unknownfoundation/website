@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unknown Foundation — Light Specimen</title>
+<meta name="description" content="A small open-source engineering collective building experimental software systems in public." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   UNKNOWN FOUNDATION — light-specimen
+   Theme: cool white, Electric Blue accent
+   Device: archival catalog grammar — specimen numbered,
+           gridded, ruled, registration marks on cards,
+           cursor-reactive proof-sheet grid in hero.
+   ============================================================ */
+
+/* ---- tokens ---- */
+:root {
+  --bg:        #F5F6F7;
+  --bg-card:   #FFFFFF;
+  --bg-card-h: #F0F2F5;
+  --text:      #0D0E10;
+  --dim:       #52576B;
+  --faint:     #9EA5B8;
+  --rule:      rgba(13,14,16,0.09);
+  --rule-s:    rgba(13,14,16,0.16);
+  --accent:    #2563EB;
+  --accent-bg: rgba(37,99,235,0.06);
+  --accent-dim: rgba(37,99,235,0.55);
+  --fd: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --fm: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --ease: cubic-bezier(0.16,1,0.3,1);
+  --ease-in: cubic-bezier(0.4,0,1,1);
+}
+
+/* ---- reset ---- */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fd);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* ---- skip link ---- */
+.skip-link {
+  position: fixed; top: -72px; left: 16px; z-index: 300;
+  padding: 10px 18px;
+  background: var(--text); color: var(--bg);
+  font-family: var(--fm); font-size: 13px; letter-spacing: .04em;
+  text-decoration: none; border-radius: 2px;
+  transition: top 220ms var(--ease);
+}
+.skip-link:focus { top: 16px; outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ---- sr-only ---- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ---- focus ---- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 56px;
+  background: rgba(245,246,247,0.88);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: .10em;
+  font-weight: 500; color: var(--text); text-decoration: none;
+  text-transform: uppercase;
+}
+.nav-brand svg { width: 18px; height: 18px; flex: none; }
+.nav-brand .logo-known { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.nav-brand .logo-unk   { fill: none; stroke: var(--dim);    stroke-width: 1.5; stroke-dasharray: 2 3; }
+.nav-brand .logo-core  { fill: var(--accent); }
+
+.nav-links {
+  display: flex; gap: 0; list-style: none;
+}
+.nav-links a {
+  display: block;
+  padding: 0 14px; height: 56px; line-height: 56px;
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: .06em;
+  color: var(--dim); text-decoration: none; text-transform: uppercase;
+  transition: color 200ms var(--ease);
+  border-left: 1px solid transparent;
+}
+.nav-links a:hover, .nav-links a:focus-visible { color: var(--text); }
+.nav-links li:first-child a { border-left: 1px solid var(--rule); }
+.nav-links li:last-child a  { border-right: 1px solid var(--rule); }
+
+.nav-gh {
+  font-family: var(--fm); font-size: 11.5px; letter-spacing: .06em;
+  color: var(--dim); text-decoration: none;
+  padding: 7px 14px; border: 1px solid var(--rule-s);
+  border-radius: 2px; transition: color 200ms, border-color 200ms;
+}
+.nav-gh:hover, .nav-gh:focus-visible { color: var(--accent); border-color: var(--accent-dim); }
+
+@media (max-width: 900px) {
+  .nav { padding: 0 24px; }
+  .nav-links { display: none; }
+}
+
+/* ============================================================
+   HERO — PROOF-SHEET PROOF
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 48px;
+  display: flex; align-items: center;
+  overflow: hidden;
+  /* registration grid offset driven by JS via --gx / --gy */
+  --gx: 0px; --gy: 0px;
+}
+
+/* The proof-sheet registration grid */
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(13,14,16,0.055) 0.5px, transparent 0.5px),
+    linear-gradient(to bottom, rgba(13,14,16,0.055) 0.5px, transparent 0.5px);
+  background-size: 48px 48px;
+  background-position: var(--gx) var(--gy);
+  transition: background-position 80ms linear;
+  z-index: 0;
+}
+
+/* Registration marks — corners of hero */
+.hero-reg {
+  position: absolute; z-index: 1; pointer-events: none;
+  width: 20px; height: 20px;
+}
+.hero-reg::before, .hero-reg::after {
+  content: ""; position: absolute;
+  background: var(--dim); opacity: 0.22;
+}
+.hero-reg::before { width: 100%; height: 0.5px; top: 50%; left: 0; transform: translateY(-50%); }
+.hero-reg::after  { height: 100%; width: 0.5px; left: 50%; top: 0; transform: translateX(-50%); }
+.hero-reg--tl { top: 80px; left: 48px; }
+.hero-reg--tr { top: 80px; right: 48px; }
+.hero-reg--bl { bottom: 48px; left: 48px; }
+.hero-reg--br { bottom: 48px; right: 48px; }
+
+/* Catalog plate number top-right */
+.hero-plate {
+  position: absolute; top: 80px; right: 48px;
+  z-index: 2; pointer-events: none;
+  text-align: right;
+  font-family: var(--fm); font-size: 10px; letter-spacing: .16em;
+  color: var(--faint); line-height: 1.8; text-transform: uppercase;
+}
+
+.hero-inner {
+  position: relative; z-index: 2;
+  max-width: 1280px; margin: 0 auto; width: 100%;
+  padding-top: 140px; padding-bottom: 80px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 80px;
+  align-items: end;
+}
+
+/* Hero wordmark */
+.hero-eyebrow {
+  font-family: var(--fm); font-size: 10px; letter-spacing: .20em;
+  color: var(--faint); margin-bottom: 28px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: ""; display: block;
+  width: 24px; height: 0.5px; background: var(--faint);
+}
+
+.wordmark {
+  font-size: clamp(52px, 9vw, 130px);
+  font-weight: 500; line-height: 0.93;
+  letter-spacing: -0.03em;
+}
+.wordmark .w-unk  { display: block; color: var(--dim); font-weight: 300; }
+.wordmark .w-fdn  { display: block; color: var(--text); }
+
+.hero-tagline {
+  margin-top: 28px;
+  max-width: 520px;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.6;
+  color: var(--dim);
+  font-weight: 300;
+}
+.hero-tagline strong { color: var(--text); font-weight: 400; }
+
+.hero-actions {
+  margin-top: 36px;
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--fm); font-size: 12px; letter-spacing: .08em;
+  padding: 11px 18px; border-radius: 2px; text-decoration: none;
+  border: 1px solid var(--rule-s); color: var(--dim);
+  transition: border-color 200ms, color 200ms, background 200ms;
+  text-transform: uppercase;
+  display: inline-block;
+}
+.btn:hover, .btn:focus-visible { color: var(--text); border-color: rgba(13,14,16,0.35); }
+.btn--primary {
+  background: var(--accent); color: #fff;
+  border-color: var(--accent);
+}
+.btn--primary:hover, .btn--primary:focus-visible {
+  background: #1d4ed8; border-color: #1d4ed8; color: #fff;
+}
+
+/* Hero sidebar — specimen index */
+.hero-index {
+  border-left: 1px solid var(--rule-s);
+  padding-left: 32px;
+  align-self: end;
+}
+.hero-index-label {
+  font-family: var(--fm); font-size: 9px; letter-spacing: .22em;
+  color: var(--faint); text-transform: uppercase; margin-bottom: 18px;
+}
+.hero-index-rows { display: flex; flex-direction: column; gap: 0; }
+.hero-index-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--fm); font-size: 11.5px;
+  color: var(--dim); text-decoration: none;
+  transition: color 200ms, padding-left 200ms;
+  letter-spacing: .04em;
+}
+.hero-index-row:first-child { border-top: 1px solid var(--rule); }
+.hero-index-row:hover, .hero-index-row:focus-visible { color: var(--text); padding-left: 4px; }
+.hero-index-row .n { color: var(--faint); min-width: 28px; }
+.hero-index-row .t { flex: 1; }
+.hero-index-row .arr { color: var(--faint); }
+
+@media (max-width: 860px) {
+  .hero { padding: 0 24px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-index { border-left: none; padding-left: 0; border-top: 1px solid var(--rule-s); padding-top: 24px; }
+  .hero-reg--tr, .hero-reg--br { right: 24px; }
+  .hero-reg--tl, .hero-reg--bl { left: 24px; }
+  .hero-plate { right: 24px; }
+}
+
+/* ============================================================
+   SECTION STRUCTURE — catalog index rule
+   ============================================================ */
+.section-wrap {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 48px 120px;
+}
+
+.section-rule {
+  display: flex; align-items: center; gap: 20px;
+  border-top: 1px solid var(--rule-s);
+  padding-top: 0; margin-bottom: 56px;
+}
+.section-index {
+  position: relative; top: -1px; /* sit on the rule */
+  font-family: var(--fm); font-size: 9px; letter-spacing: .20em;
+  color: var(--faint); text-transform: uppercase;
+  background: var(--bg);
+  padding-right: 16px; /* "eat" the rule */
+  white-space: nowrap;
+}
+.section-title-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 24px; flex-wrap: wrap;
+}
+.section-h {
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 500; letter-spacing: -0.02em;
+  margin-top: 20px;
+}
+.section-link {
+  font-family: var(--fm); font-size: 11px; letter-spacing: .10em;
+  color: var(--dim); text-decoration: none; text-transform: uppercase;
+  border-bottom: 1px solid var(--rule-s);
+  padding-bottom: 2px;
+  transition: color 200ms, border-color 200ms;
+}
+.section-link:hover, .section-link:focus-visible {
+  color: var(--accent); border-color: var(--accent-dim);
+}
+
+@media (max-width: 860px) {
+  .section-wrap { padding: 0 24px 80px; }
+}
+
+/* ============================================================
+   PROJECT SPECIMEN CARDS
+   ============================================================ */
+.specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (max-width: 960px) {
+  .specimen-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 620px) {
+  .specimen-grid { grid-template-columns: 1fr; }
+}
+
+/* The specimen card */
+.specimen {
+  position: relative;
+  background: var(--bg-card);
+  padding: 28px 28px 24px;
+  display: flex; flex-direction: column; gap: 0;
+  transition: background 200ms var(--ease);
+  /* contain corner marks */
+  overflow: hidden;
+}
+.specimen:hover, .specimen:focus-within { background: var(--bg-card-h); }
+
+/* Registration corner marks — all 4 corners */
+.specimen::before,
+.specimen::after,
+.specimen .reg-br::before,
+.specimen .reg-br::after,
+.specimen .reg-tr::before,
+.specimen .reg-tr::after,
+.specimen .reg-bl::before,
+.specimen .reg-bl::after {
+  content: "";
+  position: absolute;
+  background: var(--dim);
+  opacity: 0.14;
+  transition: opacity 200ms var(--ease);
+  pointer-events: none;
+}
+/* TL horizontal arm */
+.specimen::before {
+  width: 12px; height: 0.5px;
+  top: 12px; left: 12px;
+}
+/* TL vertical arm */
+.specimen::after {
+  width: 0.5px; height: 12px;
+  top: 12px; left: 12px;
+}
+/* We use span helpers for the other 3 corners */
+.reg-br, .reg-tr, .reg-bl {
+  position: absolute; pointer-events: none;
+}
+.reg-br { bottom: 12px; right: 12px; width: 12px; height: 12px; }
+.reg-tr { top: 12px; right: 12px; width: 12px; height: 12px; }
+.reg-bl { bottom: 12px; left: 12px; width: 12px; height: 12px; }
+
+.reg-br::before { content:""; position:absolute; width:12px; height:0.5px; top:50%; left:0; transform:translateY(-50%); background:var(--dim); opacity:.14; transition:opacity 200ms var(--ease); }
+.reg-br::after  { content:""; position:absolute; width:0.5px; height:12px; left:50%; top:0; transform:translateX(-50%); background:var(--dim); opacity:.14; transition:opacity 200ms var(--ease); }
+.reg-tr::before { content:""; position:absolute; width:12px; height:0.5px; top:50%; left:0; transform:translateY(-50%); background:var(--dim); opacity:.14; transition:opacity 200ms var(--ease); }
+.reg-tr::after  { content:""; position:absolute; width:0.5px; height:12px; left:50%; top:0; transform:translateX(-50%); background:var(--dim); opacity:.14; transition:opacity 200ms var(--ease); }
+.reg-bl::before { content:""; position:absolute; width:12px; height:0.5px; top:50%; left:0; transform:translateY(-50%); background:var(--dim); opacity:.14; transition:opacity 200ms var(--ease); }
+.reg-bl::after  { content:""; position:absolute; width:0.5px; height:12px; left:50%; top:0; transform:translateX(-50%); background:var(--dim); opacity:.14; transition:opacity 200ms var(--ease); }
+
+/* Reveal on hover */
+.specimen:hover::before,  .specimen:hover::after,
+.specimen:focus-within::before, .specimen:focus-within::after { opacity: 0.85; }
+.specimen:hover .reg-br::before, .specimen:hover .reg-br::after,
+.specimen:hover .reg-tr::before, .specimen:hover .reg-tr::after,
+.specimen:hover .reg-bl::before, .specimen:hover .reg-bl::after,
+.specimen:focus-within .reg-br::before, .specimen:focus-within .reg-br::after,
+.specimen:focus-within .reg-tr::before, .specimen:focus-within .reg-tr::after,
+.specimen:focus-within .reg-bl::before, .specimen:focus-within .reg-bl::after { opacity: 0.85; }
+
+/* Card content */
+.spec-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 20px;
+}
+.spec-code {
+  font-family: var(--fm); font-size: 10px; letter-spacing: .20em;
+  color: var(--accent); text-transform: uppercase; font-weight: 500;
+}
+.spec-cat {
+  font-family: var(--fm); font-size: 9.5px; letter-spacing: .12em;
+  color: var(--faint); text-transform: uppercase;
+}
+.spec-title {
+  font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+  margin-bottom: 10px; line-height: 1.2;
+}
+.spec-desc {
+  font-size: 13.5px; line-height: 1.58; color: var(--dim);
+  font-weight: 300; flex: 1; margin-bottom: 24px;
+}
+
+/* Field rows — catalog data */
+.spec-fields {
+  border-top: 1px solid var(--rule);
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.spec-field {
+  display: flex; align-items: baseline; gap: 8px;
+  font-family: var(--fm);
+}
+.spec-field dt {
+  font-size: 8.5px; letter-spacing: .22em; color: var(--faint);
+  text-transform: uppercase; min-width: 56px; flex: none;
+}
+.spec-field dd {
+  font-size: 11.5px; color: var(--text); letter-spacing: .02em;
+}
+
+/* Status indicator */
+.status-dot {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.status-dot::before {
+  content: ""; display: inline-block;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--faint);
+  flex: none;
+}
+.status-dot.active::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+/* Links row */
+.spec-links {
+  display: flex; gap: 14px; margin-top: 18px;
+  padding-top: 14px; border-top: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+.spec-links a {
+  font-family: var(--fm); font-size: 11px; letter-spacing: .08em;
+  color: var(--dim); text-decoration: none; text-transform: uppercase;
+  transition: color 180ms;
+}
+.spec-links a:hover, .spec-links a:focus-visible { color: var(--accent); }
+
+/* ============================================================
+   EXPEDITIONS — catalog list
+   ============================================================ */
+.exp-list {
+  border-top: 1px solid var(--rule-s);
+}
+.exp-entry {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: start;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+  transition: padding-left 220ms var(--ease);
+}
+.exp-entry::after {
+  content: ""; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 0;
+  background: var(--accent);
+  transition: width 220ms var(--ease);
+}
+.exp-entry:hover, .exp-entry:focus-visible {
+  padding-left: 8px;
+  outline: none;
+}
+.exp-entry:hover::after, .exp-entry:focus-visible::after {
+  width: 1.5px;
+}
+
+.exp-code {
+  font-family: var(--fm); font-size: 10px; letter-spacing: .18em;
+  color: var(--accent); text-transform: uppercase; padding-top: 3px;
+}
+.exp-body {}
+.exp-title {
+  font-size: 17px; font-weight: 400; letter-spacing: -0.01em;
+  line-height: 1.3; margin-bottom: 5px;
+}
+.exp-sub {
+  font-size: 13px; color: var(--dim); font-weight: 300; line-height: 1.5;
+}
+.exp-status {
+  font-family: var(--fm); font-size: 9.5px; letter-spacing: .14em;
+  color: var(--faint); text-transform: uppercase;
+  padding-top: 3px; white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .exp-entry { grid-template-columns: 60px 1fr; }
+  .exp-status { display: none; }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--rule-s);
+  padding: 0 48px;
+  max-width: 100%;
+  font-family: var(--fm);
+}
+.footer-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 260px 1fr 200px;
+  gap: 48px;
+  padding: 48px 0 64px;
+  border-bottom: 1px solid var(--rule);
+}
+@media (max-width: 860px) {
+  .site-footer { padding: 0 24px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 540px) {
+  .footer-inner { grid-template-columns: 1fr; }
+}
+
+.footer-brand {}
+.footer-brand .brand-mark {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; letter-spacing: .12em; color: var(--text);
+  text-decoration: none; text-transform: uppercase; margin-bottom: 14px;
+}
+.footer-brand .brand-mark svg { width: 16px; height: 16px; }
+.footer-brand .brand-mark .logo-known { fill:none; stroke:var(--accent); stroke-width:1.5; }
+.footer-brand .brand-mark .logo-unk   { fill:none; stroke:var(--dim); stroke-width:1.5; stroke-dasharray:2 3; }
+.footer-brand .brand-mark .logo-core  { fill:var(--accent); }
+.footer-brand p {
+  font-size: 11.5px; line-height: 1.6; color: var(--dim); max-width: 220px;
+}
+
+.footer-nav { display: flex; flex-direction: column; gap: 10px; }
+.footer-nav-label {
+  font-size: 9px; letter-spacing: .22em; color: var(--faint);
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.footer-nav a {
+  font-size: 11.5px; letter-spacing: .04em; color: var(--dim);
+  text-decoration: none; transition: color 180ms;
+}
+.footer-nav a:hover, .footer-nav a:focus-visible { color: var(--text); }
+
+.footer-meta { display: flex; flex-direction: column; gap: 10px; }
+.footer-meta-label {
+  font-size: 9px; letter-spacing: .22em; color: var(--faint);
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.footer-meta a {
+  font-size: 11.5px; color: var(--dim); text-decoration: none;
+  transition: color 180ms; letter-spacing: .04em;
+}
+.footer-meta a:hover, .footer-meta a:focus-visible { color: var(--accent); }
+.footer-meta span { font-size: 11px; color: var(--faint); }
+
+.footer-bottom {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  padding: 18px 0;
+  font-size: 10px; letter-spacing: .10em; color: var(--faint);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   ENTRY ANIMATIONS
+   ============================================================ */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays */
+.d1 { transition-delay: 0ms; }
+.d2 { transition-delay: 80ms; }
+.d3 { transition-delay: 160ms; }
+.d4 { transition-delay: 240ms; }
+.d5 { transition-delay: 320ms; }
+.d6 { transition-delay: 400ms; }
+
+/* Hero content uses CSS animations for immediate load */
+.hero-content { --ent: 0ms; }
+.hero-eyebrow { animation: entryFade 600ms 80ms var(--ease) both; }
+.wordmark     { animation: entryFade 600ms 180ms var(--ease) both; }
+.hero-tagline { animation: entryFade 600ms 340ms var(--ease) both; }
+.hero-actions { animation: entryFade 600ms 480ms var(--ease) both; }
+.hero-index   { animation: entryFade 600ms 560ms var(--ease) both; }
+
+@keyframes entryFade {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; animation-delay: 0ms !important; }
+  .hero::before { transition: none; }
+  .fade-up { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- NAV -->
+<header>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="#" aria-label="Unknown Foundation — home">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path class="logo-known" d="M12 3.5 A8.5 8.5 0 0 1 12 20.5"/>
+        <path class="logo-unk"   d="M12 3.5 A8.5 8.5 0 0 0 12 20.5"/>
+        <circle class="logo-core" cx="12" cy="12" r="2"/>
+      </svg>
+      Unknown Foundation
+    </a>
+    <ul class="nav-links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#expeditions">Expeditions</a></li>
+      <li><a href="#">Archive</a></li>
+      <li><a href="#">Manifesto</a></li>
+      <li><a href="#">Contribute</a></li>
+    </ul>
+    <a class="nav-gh" href="https://github.com/unknown-foundation" target="_blank" rel="noopener">
+      GitHub ↗
+    </a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero" aria-labelledby="hero-wordmark">
+
+  <!-- Registration marks -->
+  <div class="hero-reg hero-reg--tl" aria-hidden="true"></div>
+  <div class="hero-reg hero-reg--tr" aria-hidden="true"></div>
+  <div class="hero-reg hero-reg--bl" aria-hidden="true"></div>
+  <div class="hero-reg hero-reg--br" aria-hidden="true"></div>
+
+  <!-- Catalog plate -->
+  <div class="hero-plate" aria-hidden="true">
+    SPECIMEN CAT.<br>
+    UF-SITE-01<br>
+    REV. 2026-A
+  </div>
+
+  <div class="hero-inner">
+    <div class="hero-content">
+      <p class="hero-eyebrow" aria-label="Open-source engineering collective">
+        Open-source engineering collective
+      </p>
+      <h1 class="wordmark" id="hero-wordmark">
+        <span class="w-unk">Unknown</span>
+        <span class="w-fdn">Foundation</span>
+      </h1>
+      <p class="hero-tagline">
+        Building <strong>experimental software systems in public</strong> — exploring technical territory
+        that is not yet mapped, understood, or productized.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn--primary" href="#projects">View Projects</a>
+        <a class="btn" href="#expeditions">Explore Expeditions</a>
+        <a class="btn" href="https://github.com/unknown-foundation" target="_blank" rel="noopener">Contribute on GitHub ↗</a>
+      </div>
+    </div>
+
+    <!-- Specimen index sidebar -->
+    <nav class="hero-index" aria-label="Site sections">
+      <p class="hero-index-label">Index</p>
+      <div class="hero-index-rows">
+        <a class="hero-index-row" href="#projects">
+          <span class="n">§ 01</span>
+          <span class="t">Projects</span>
+          <span class="arr">↓</span>
+        </a>
+        <a class="hero-index-row" href="#expeditions">
+          <span class="n">§ 02</span>
+          <span class="t">Expeditions</span>
+          <span class="arr">↓</span>
+        </a>
+        <a class="hero-index-row" href="#">
+          <span class="n">§ 03</span>
+          <span class="t">Archive</span>
+          <span class="arr">↗</span>
+        </a>
+        <a class="hero-index-row" href="#">
+          <span class="n">§ 04</span>
+          <span class="t">Manifesto</span>
+          <span class="arr">↗</span>
+        </a>
+        <a class="hero-index-row" href="#">
+          <span class="n">§ 05</span>
+          <span class="t">Contribute</span>
+          <span class="arr">↗</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- SECTION: PROJECTS -->
+  <section id="projects" aria-labelledby="projects-h" class="section-wrap">
+
+    <div class="section-rule fade-up d1">
+      <span class="section-index">§ 01 / Projects</span>
+    </div>
+
+    <div class="section-title-row fade-up d2">
+      <h2 class="section-h" id="projects-h">Active Specimens</h2>
+      <a class="section-link" href="#">All projects ↗</a>
+    </div>
+
+    <div class="specimen-grid" role="list">
+
+      <!-- UF-01 -->
+      <article class="specimen fade-up d3" role="listitem">
+        <div class="reg-br" aria-hidden="true"></div>
+        <div class="reg-tr" aria-hidden="true"></div>
+        <div class="reg-bl" aria-hidden="true"></div>
+
+        <div class="spec-header">
+          <span class="spec-code">UF-01</span>
+          <span class="spec-cat">Knowledge Systems</span>
+        </div>
+
+        <h3 class="spec-title">Knowledge Engine</h3>
+        <p class="spec-desc">
+          Open-source infrastructure for collaborative knowledge systems —
+          durable, queryable, owned by no single node.
+        </p>
+
+        <dl class="spec-fields">
+          <div class="spec-field">
+            <dt>Status</dt>
+            <dd><span class="status-dot active">Active Development</span></dd>
+          </div>
+          <div class="spec-field">
+            <dt>Language</dt>
+            <dd>Rust</dd>
+          </div>
+          <div class="spec-field">
+            <dt>License</dt>
+            <dd>Apache-2.0</dd>
+          </div>
+          <div class="spec-field">
+            <dt>Stars</dt>
+            <dd>—</dd>
+          </div>
+          <div class="spec-field">
+            <dt>Updated</dt>
+            <dd>—</dd>
+          </div>
+        </dl>
+
+        <div class="spec-links">
+          <a href="#" aria-label="UF-01 Repository">Repository ↗</a>
+          <a href="#" aria-label="UF-01 Documentation">Docs</a>
+          <a href="#" aria-label="UF-01 Roadmap">Roadmap</a>
+        </div>
+      </article>
+
+      <!-- UF-02 -->
+      <article class="specimen fade-up d4" role="listitem">
+        <div class="reg-br" aria-hidden="true"></div>
+        <div class="reg-tr" aria-hidden="true"></div>
+        <div class="reg-bl" aria-hidden="true"></div>
+
+        <div class="spec-header">
+          <span class="spec-code">UF-02</span>
+          <span class="spec-cat">AI Tooling</span>
+        </div>
+
+        <h3 class="spec-title">Signal</h3>
+        <p class="spec-desc">
+          A local-first toolkit for reasoning over private corpora —
+          without surrendering your data to a third-party inference layer.
+        </p>
+
+        <dl class="spec-fields">
+          <div class="spec-field">
+            <dt>Status</dt>
+            <dd><span class="status-dot active">Active Development</span></dd>
+          </div>
+          <div class="spec-field">
+            <dt>Language</dt>
+            <dd>TypeScript</dd>
+          </div>
+          <div class="spec-field">
+            <dt>License</dt>
+            <dd>MIT</dd>
+          </div>
+          <div class="spec-field">
+            <dt>Stars</dt>
+            <dd>—</dd>
+          </div>
+          <div class="spec-field">
+            <dt>Updated</dt>
+            <dd>—</dd>
+          </div>
+        </dl>
+
+        <div class="spec-links">
+          <a href="#" aria-label="UF-02 Repository">Repository ↗</a>
+          <a href="#" aria-label="UF-02 Documentation">Docs</a>
+          <a href="#" aria-label="UF-02 Roadmap">Roadmap</a>
+        </div>
+      </article>
+
+      <!-- UF-03 -->
+      <article class="specimen fade-up d5" role="listitem">
+        <div class="reg-br" aria-hidden="true"></div>
+        <div class="reg-tr" aria-hidden="true"></div>
+        <div class="reg-bl" aria-hidden="true"></div>
+
+        <div class="spec-header">
+          <span class="spec-code">UF-03</span>
+          <span class="spec-cat">Developer Infrastructure</span>
+        </div>
+
+        <h3 class="spec-title">Driftwood</h3>
+        <p class="spec-desc">
+          Deterministic build and replay for distributed systems —
+          making the non-reproducible reproducible, one captured trace at a time.
+        </p>
+
+        <dl class="spec-fields">
+          <div class="spec-field">
+            <dt>Status</dt>
+            <dd><span class="status-dot">Early Research</span></dd>
+          </div>
+          <div class="spec-field">
+            <dt>Language</dt>
+            <dd>Go</dd>
+          </div>
+          <div class="spec-field">
+            <dt>License</dt>
+            <dd>Apache-2.0</dd>
+          </div>
+          <div class="spec-field">
+            <dt>Stars</dt>
+            <dd>—</dd>
+          </div>
+          <div class="spec-field">
+            <dt>Updated</dt>
+            <dd>—</dd>
+          </div>
+        </dl>
+
+        <div class="spec-links">
+          <a href="#" aria-label="UF-03 Repository">Repository ↗</a>
+          <a href="#" aria-label="UF-03 Documentation">Docs</a>
+          <a href="#" aria-label="UF-03 Roadmap">Roadmap</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- SECTION: EXPEDITIONS -->
+  <section id="expeditions" aria-labelledby="exp-h" class="section-wrap">
+
+    <div class="section-rule fade-up d1">
+      <span class="section-index">§ 02 / Expeditions</span>
+    </div>
+
+    <div class="section-title-row fade-up d2">
+      <h2 class="section-h" id="exp-h">Field Notes</h2>
+      <a class="section-link" href="#">All expeditions ↗</a>
+    </div>
+
+    <nav class="exp-list fade-up d3" aria-label="Recent expeditions">
+
+      <a class="exp-entry" href="#" aria-label="EXP-01: Distributed intelligence without central ownership">
+        <span class="exp-code">EXP-01</span>
+        <span class="exp-body">
+          <span class="exp-title">Distributed intelligence without central ownership</span>
+          <span class="exp-sub">How can independent nodes coordinate knowledge with no authority in the middle? An architecture exploration across three distributed systems paradigms.</span>
+        </span>
+        <span class="exp-status">In Progress</span>
+      </a>
+
+      <a class="exp-entry" href="#" aria-label="EXP-02: Making the non-reproducible reproducible">
+        <span class="exp-code">EXP-02</span>
+        <span class="exp-body">
+          <span class="exp-title">Making the non-reproducible reproducible</span>
+          <span class="exp-sub">Deterministic capture and replay for systems that refuse to behave twice. Prototype, findings, and the surprising places it breaks down.</span>
+        </span>
+        <span class="exp-status">Results</span>
+      </a>
+
+      <a class="exp-entry" href="#" aria-label="EXP-03: Reasoning over a corpus you never hand over">
+        <span class="exp-code">EXP-03</span>
+        <span class="exp-body">
+          <span class="exp-title">Reasoning over a corpus you never hand over</span>
+          <span class="exp-sub">Local-first retrieval-augmented reasoning where the data never leaves the building. What works, what's slow, what's missing in the open-source stack.</span>
+        </span>
+        <span class="exp-status">Prototype</span>
+      </a>
+
+    </nav>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <a class="brand-mark" href="#" aria-label="Unknown Foundation home">
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16">
+          <path class="logo-known" d="M12 3.5 A8.5 8.5 0 0 1 12 20.5"/>
+          <path class="logo-unk"   d="M12 3.5 A8.5 8.5 0 0 0 12 20.5"/>
+          <circle class="logo-core" cx="12" cy="12" r="2"/>
+        </svg>
+        Unknown Foundation
+      </a>
+      <p>A small open-source engineering collective building experimental software systems in public.</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <span class="footer-nav-label">Navigate</span>
+      <a href="#projects">Projects</a>
+      <a href="#expeditions">Expeditions</a>
+      <a href="#">Archive</a>
+      <a href="#">Manifesto</a>
+      <a href="#">Team</a>
+      <a href="#">Contribute</a>
+    </nav>
+
+    <div class="footer-meta">
+      <span class="footer-meta-label">Open Source</span>
+      <a href="https://github.com/unknown-foundation" target="_blank" rel="noopener">github.com/unknown-foundation ↗</a>
+      <span>Apache-2.0 · MIT</span>
+      <span>Last deploy — &nbsp;· Build —</span>
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <span>Unknown Foundation · Est. 2026</span>
+    <span>Exploring unknown technical territory</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---- 1. Hero proof-sheet grid — cursor reactive offset ---- */
+  var hero = document.getElementById('hero');
+  var RANGE = 8; // max px shift
+
+  function onMouseMove(e) {
+    if (!hero) return;
+    var rect = hero.getBoundingClientRect();
+    // Normalized -1 to +1
+    var nx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
+    var ny = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
+    hero.style.setProperty('--gx', (nx * RANGE).toFixed(2) + 'px');
+    hero.style.setProperty('--gy', (ny * RANGE).toFixed(2) + 'px');
+  }
+
+  function onMouseLeave() {
+    if (!hero) return;
+    hero.style.setProperty('--gx', '0px');
+    hero.style.setProperty('--gy', '0px');
+  }
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduced && hero) {
+    hero.addEventListener('mousemove', onMouseMove, { passive: true });
+    hero.addEventListener('mouseleave', onMouseLeave, { passive: true });
+  }
+
+  /* ---- 2. IntersectionObserver scroll-in for fade-up elements ---- */
+  var fadeEls = document.querySelectorAll('.fade-up');
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    fadeEls.forEach(function (el) { io.observe(el); });
+  } else {
+    // Fallback: reveal all immediately
+    fadeEls.forEach(function (el) { el.classList.add('visible'); });
+  }
+
+  /* ---- 3. Pause rAF when tab hidden (no rAF loop here, but guard for future) ---- */
+  document.addEventListener('visibilitychange', function () {
+    // The hero grid interaction relies on mousemove only — no continuous rAF.
+    // This handler is a forward-compat guard.
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="amber">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UF — Direction 04 · The Void</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="palette.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-display);-webkit-font-smoothing:antialiased;transition:background .6s var(--ease)}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.025;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .void{position:relative;height:100vh;overflow:hidden}
+  .point{position:absolute;top:38%;left:62%;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:0;animation:bloom 2600ms var(--ease) 400ms forwards}  /* the beacon = the known */
+  .point::after{content:"";position:absolute;left:50%;top:50%;width:64vmax;height:64vmax;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(var(--glow),.16) 0%,transparent 58%)}  /* glow raised from .10 to perceptible */
+  @keyframes bloom{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+  .content{position:absolute;left:9vw;bottom:18vh;max-width:620px}
+  .eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;color:var(--text-dim);margin-bottom:26px}  /* faint -> dim (AA) */
+  h1{font-size:clamp(40px,6.5vw,92px);font-weight:400;line-height:1;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--text-dim);font-weight:300}
+  .tagline{margin-top:26px;max-width:420px;font-size:16px;line-height:1.6;color:var(--text-dim);font-weight:300}
+  .actions{margin-top:34px;display:flex;gap:22px;flex-wrap:wrap}
+  .actions a{font-family:var(--font-mono);font-size:13px;color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:4px;transition:color .4s var(--ease),border-color .4s var(--ease)}
+  .actions a:first-child{color:var(--accent)}                 /* the one amber action */
+  .actions a:hover,.actions a:focus-visible{color:var(--text);border-color:var(--text-dim)}
+  .tag{position:fixed;right:18px;bottom:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);z-index:60}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}  /* void keeps its gentle atmospheric fade-up (links, no border to wipe) */
+  .anim{opacity:0;animation:rise 1400ms var(--ease) forwards}
+  .d1{animation-delay:900ms}.d2{animation-delay:1150ms}.d3{animation-delay:1450ms}.d4{animation-delay:1750ms}
+  @media(prefers-reduced-motion:reduce){.anim{animation:none;opacity:1;transform:none}.point{animation:none;opacity:1}body,.actions a{transition:none}}
+</style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <main id="main" class="void">
+    <div class="point" aria-hidden="true"></div>
+    <div class="content">
+      <p class="eyebrow anim d1">// A SMALL OPEN-SOURCE ENGINEERING COLLECTIVE</p>
+      <h1 class="anim d2">Unknown <em>Foundation</em></h1>
+      <p class="tagline anim d3">We build experimental software systems in public, and explore the territory that is not yet mapped.</p>
+      <div class="actions anim d4">
+        <a href="#">View Projects →</a>
+        <a href="#">Explore Expeditions</a>
+        <a href="#">Contribute on GitHub</a>
+      </div>
+    </div>
+  </main>
+  <div class="tag" aria-hidden="true">DIRECTION 04 — THE VOID</div>
+
+  <div class="palette-switch" role="group" aria-label="Color palette">
+    <span class="lbl">PALETTE</span>
+    <button type="button" data-p="amber" aria-label="Amber palette"><span class="sw" style="background:#E0A24A"></span><span>Amber</span></button>
+    <button type="button" data-p="graphite" aria-label="Graphite palette"><span class="sw" style="background:#C6C6CC"></span><span>Graphite</span></button>
+    <button type="button" data-p="nocturne" aria-label="Nocturne palette"><span class="sw" style="background:#6E9BD8"></span><span>Nocturne</span></button>
+    <button type="button" data-p="patina" aria-label="Patina palette"><span class="sw" style="background:#5FA391"></span><span>Patina</span></button>
+  </div>
+<script src="palette.js"></script>
+</body>
+</html>
