@@ -81,7 +81,7 @@
   .term-body::-webkit-scrollbar{width:8px}.term-body::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px}
   .ln{white-space:pre-wrap;word-break:break-word}
   .ln .t{color:var(--dim);display:inline-block;width:9ch}
-  .ln .lvl{color:var(--dim);display:inline-block;width:7ch}
+  .ln .lvl{color:var(--text);display:inline-block;width:7ch}
   .ln .ok{color:var(--accent)}
   .ln .hash{color:var(--dim)}
   .ln.cmd{color:var(--text)}
@@ -184,6 +184,7 @@
   .rec2 .r-q{font-size:15px;line-height:1.6;color:var(--dim);max-width:66ch;margin-bottom:12px}
   .rec2 .r-find{font-family:var(--fm);font-size:13px;color:var(--text);max-width:66ch;margin-bottom:12px}
   .rec2 .r-flabel{color:var(--dim)} .rec2 .r-flabel.open{color:var(--dim)}
+  .rec2 .r-flabel::after{content:"──";color:var(--line-strong);margin:0 10px 0 8px}
   .rec2.note{padding:18px 0} .rec2.note .r-q{margin-bottom:10px}
   .filestat{font-family:var(--fm);font-size:12px;color:var(--dim);margin-bottom:16px}
   .prose.gutter{border-left:1px solid var(--line);padding-left:24px}
@@ -261,9 +262,9 @@
     <section class="sec" id="articles" aria-labelledby="art-h">
       <div class="sec-head"><div><p class="eyebrow">// RESEARCH &amp; NOTES, IN THE OPEN</p><h2 id="art-h">Articles</h2></div><span class="path"><span class="root">~/</span>articles <span class="n">[4]</span></span></div>
       <ul class="exp" role="list">
-        <li class="rec2"><div class="r-head"><span class="r-path"><span class="root">~/expeditions/</span>exp-01.md</span><span class="r-when">[research · in&nbsp;progress]</span></div><h3 class="r-title">Distributed intelligence without central ownership</h3><p class="r-q">How can independent nodes coordinate knowledge with no authority in the middle?</p><div class="r-find"><span class="r-flabel">FINDING&nbsp;──</span> causal order survives partition at ~340ms median.</div><div class="r-acts"><button class="console" type="button" data-cmd="cat expeditions/exp-01.md">▸ open in console</button></div></li>
-        <li class="rec2"><div class="r-head"><span class="r-path"><span class="root">~/expeditions/</span>exp-02.md</span><span class="r-when on">[research · results]</span></div><h3 class="r-title">Can a distributed build be identical twice?</h3><p class="r-q">Bit-for-bit reproducible builds across hosts, machines, and months.</p><div class="r-find"><span class="r-flabel">FINDING&nbsp;──</span> bit-for-bit identical builds across 3 hosts; published.</div><div class="r-acts"><button class="console" type="button" data-cmd="cat expeditions/exp-02.md">▸ open in console</button></div></li>
-        <li class="rec2"><div class="r-head"><span class="r-path"><span class="root">~/expeditions/</span>exp-03.md</span><span class="r-when">[research · prototype]</span></div><h3 class="r-title">How cheap can private retrieval get?</h3><p class="r-q">Local-first reasoning under a fixed privacy budget — the corpus never leaves the building.</p><div class="r-find"><span class="r-flabel open">OPEN&nbsp;──</span> prototype running; no result yet.</div><div class="r-acts"><button class="console" type="button" data-cmd="cat expeditions/exp-03.md">▸ open in console</button></div></li>
+        <li class="rec2"><div class="r-head"><span class="r-path"><span class="root">~/expeditions/</span>exp-01.md</span><span class="r-when">[research · in&nbsp;progress]</span></div><h3 class="r-title">Distributed intelligence without central ownership</h3><p class="r-q">How can independent nodes coordinate knowledge with no authority in the middle?</p><div class="r-find"><span class="r-flabel">FINDING</span> causal order survives partition at ~340ms median.</div><div class="r-acts"><button class="console" type="button" data-cmd="cat expeditions/exp-01.md">▸ open in console</button></div></li>
+        <li class="rec2"><div class="r-head"><span class="r-path"><span class="root">~/expeditions/</span>exp-02.md</span><span class="r-when on">[research · results]</span></div><h3 class="r-title">Can a distributed build be identical twice?</h3><p class="r-q">Bit-for-bit reproducible builds across hosts, machines, and months.</p><div class="r-find"><span class="r-flabel">FINDING</span> bit-for-bit identical builds across 3 hosts; published.</div><div class="r-acts"><button class="console" type="button" data-cmd="cat expeditions/exp-02.md">▸ open in console</button></div></li>
+        <li class="rec2"><div class="r-head"><span class="r-path"><span class="root">~/expeditions/</span>exp-03.md</span><span class="r-when">[research · prototype]</span></div><h3 class="r-title">How cheap can private retrieval get?</h3><p class="r-q">Local-first reasoning under a fixed privacy budget — the corpus never leaves the building.</p><div class="r-find"><span class="r-flabel open">OPEN</span> prototype running; no result yet.</div><div class="r-acts"><button class="console" type="button" data-cmd="cat expeditions/exp-03.md">▸ open in console</button></div></li>
         <li class="rec2 note"><div class="r-head"><span class="r-path"><span class="root">~/notes/</span>deterministic-builds.md</span><span class="r-when">[note]</span></div><h3 class="r-title">Deterministic builds — how and why</h3><p class="r-q">Why we pin the whole toolchain and record a sha256 of every input.</p><div class="r-acts"><button class="console" type="button" data-cmd="cat notes/deterministic-builds.md">▸ open in console</button></div></li>
       </ul>
       <div class="sec-foot"><span>4 articles · 3 research · 1 note</span><button class="console" type="button" data-cmd="articles">browse in console ↗</button></div>
@@ -350,6 +351,7 @@
 
   var W='<span style="color:#E8B84B">⚠</span>', OK='<span class="ok">✓</span>';
   function H(h){ return '<span class="hash">'+h+'</span>'; }
+  function ghl(s){ return s.replace(/^([0-9a-f]{7})/gm,'<span class="acc">$1</span>').replace(/uf-0[0-9]/g,'<span class="acc">$&</span>'); }
   // a large corpus so the feed never visibly repeats · ~12% are imperfect lines that self-recover
   var CORPUS=[
     ['build','uf-01/knowledge-engine — release build '+OK+' '+H('a3f8d2c')],
@@ -537,8 +539,8 @@
       if(a[0]==='log'){
         var proj=(a[1]||'').toLowerCase(), AL={'knowledge-engine':'uf-01','signal':'uf-02','driftwood':'uf-03'}; proj=AL[proj]||proj;
         var P={'uf-01':'a91c5f7  perf: avoid alloc in the hot path\n9e2d77b  refactor: extract storage trait\n1f0b2cd  release v0.5.1','uf-02':'c40f1aa  release v0.3.0\n2bd91c4  feat: streaming retrieval','uf-03':'6f3aa21  fix: off-by-one in WAL replay\n3c7e0b9  test: add WAL torn-write cases\n7c1a9e0  feat/wal merged'};
-        if(proj) return P[proj] || 'git log: no such project: '+esc(proj)+'\ntry: uf-01 · uf-02 · uf-03';
-        return 'a91c5f7  uf-01  perf: avoid alloc in the hot path\nc40f1aa  uf-02  release v0.3.0\n6f3aa21  uf-03  fix: off-by-one in WAL replay\nd77e0a1  uf-01  merge release/0.5 → main\n3c7e0b9  uf-03  test: add WAL torn-write cases';
+        if(proj) return P[proj] ? ghl(P[proj]) : 'git log: no such project: '+esc(proj)+'\ntry: uf-01 · uf-02 · uf-03';
+        return ghl('a91c5f7  uf-01  perf: avoid alloc in the hot path\nc40f1aa  uf-02  release v0.3.0\n6f3aa21  uf-03  fix: off-by-one in WAL replay\nd77e0a1  uf-01  merge release/0.5 → main\n3c7e0b9  uf-03  test: add WAL torn-write cases');
       }
       if(a[0]==='status') return 'On branch main\nYour branch is up to date with origin/main.\nnothing to commit, working tree clean';
       return 'usage: git log [project] · git status  (read-only — no push)';
